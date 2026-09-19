@@ -188,7 +188,7 @@ export default async function CategoryPage(props: CategoryPageProps) {
   const productCount = 0; // This will be shown in CategoryProducts component instead
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
       <nav className="mb-8" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -209,14 +209,15 @@ export default async function CategoryPage(props: CategoryPageProps) {
       </nav>
 
       {/* Category Header */}
-      <div className="mb-8">
+      <div className="mb-10 rounded-3xl bg-slate-950 px-6 py-10 text-white sm:px-10">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-300">Browse by category</p>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight">
               {category.name}
             </h1>
             {category.description && (
-              <p className="mt-2 text-lg text-muted-foreground">
+              <p className="mt-3 max-w-2xl text-lg text-slate-300">
                 {category.description}
               </p>
             )}
@@ -233,9 +234,9 @@ export default async function CategoryPage(props: CategoryPageProps) {
         </div>
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col gap-8 lg:flex-row">
         {/* Filters Sidebar */}
-        <aside className="w-64 flex-shrink-0">
+        <aside className="w-full flex-shrink-0 lg:w-64">
           <FilterSidebar />
         </aside>
 

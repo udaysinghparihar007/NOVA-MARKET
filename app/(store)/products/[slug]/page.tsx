@@ -103,7 +103,7 @@ export default async function ProductPage(props: ProductPageProps) {
     <>
       <JsonLd data={structuredData} />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="mb-8" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -132,10 +132,10 @@ export default async function ProductPage(props: ProductPageProps) {
           </ol>
         </nav>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
           {/* Product Images */}
           <div className="space-y-4">
-            <div className="aspect-square overflow-hidden rounded-lg">
+            <div className="aspect-square overflow-hidden rounded-[2rem] bg-slate-100">
               <Image
                 src={product.images[0]?.url || '/images/placeholder.png'}
                 alt={product.name}
@@ -150,7 +150,7 @@ export default async function ProductPage(props: ProductPageProps) {
                 {product.images.slice(1, 5).map((image, index) => (
                   <div
                     key={index}
-                    className="aspect-square overflow-hidden rounded-lg"
+                    className="aspect-square overflow-hidden rounded-2xl bg-slate-100"
                   >
                     <Image
                       src={image.url}
@@ -166,9 +166,10 @@ export default async function ProductPage(props: ProductPageProps) {
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6">
+          <div className="space-y-7 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{product.category?.name || 'Featured product'}</p>
+              <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-950">
                 {product.name}
               </h1>
               <div className="mt-2 flex items-center space-x-2">
@@ -192,7 +193,7 @@ export default async function ProductPage(props: ProductPageProps) {
 
             <div className="space-y-2">
               <div className="flex items-center space-x-4">
-                <span className="text-3xl font-bold text-gray-900">
+                <span className="text-4xl font-bold tracking-tight text-slate-950">
                   {formatPrice(product.price)}
                 </span>
                 {product.comparePrice && (
@@ -214,11 +215,11 @@ export default async function ProductPage(props: ProductPageProps) {
               )}
             </div>
 
-            <p className="text-gray-600">{product.description}</p>
+            <p className="text-base leading-7 text-muted-foreground">{product.description}</p>
 
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
-                <Badge variant="default">In Stock</Badge>
+                <Badge variant="default" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">In Stock</Badge>
                 {product.sku && (
                   <span className="text-sm text-muted-foreground">
                     SKU: {product.sku}
@@ -226,7 +227,7 @@ export default async function ProductPage(props: ProductPageProps) {
                 )}
               </div>
 
-              <AddToCart productId={product.id} />
+              <AddToCart productId={product.id} showQuantitySelector />
 
               <div className="flex space-x-2">
                 <Button variant="outline" size="sm">
@@ -245,19 +246,19 @@ export default async function ProductPage(props: ProductPageProps) {
             {/* Features */}
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <Truck className="mx-auto h-8 w-8 text-blue-600" />
+                <Truck className="mx-auto h-7 w-7 text-primary" />
                 <p className="mt-2 text-sm font-medium">Free Shipping</p>
                 <p className="text-xs text-muted-foreground">
                   On orders over $100
                 </p>
               </div>
               <div>
-                <Shield className="mx-auto h-8 w-8 text-green-600" />
+                <Shield className="mx-auto h-7 w-7 text-primary" />
                 <p className="mt-2 text-sm font-medium">Secure Payment</p>
                 <p className="text-xs text-muted-foreground">100% protected</p>
               </div>
               <div>
-                <RotateCcw className="mx-auto h-8 w-8 text-purple-600" />
+                <RotateCcw className="mx-auto h-7 w-7 text-primary" />
                 <p className="mt-2 text-sm font-medium">Easy Returns</p>
                 <p className="text-xs text-muted-foreground">30-day policy</p>
               </div>
@@ -268,7 +269,7 @@ export default async function ProductPage(props: ProductPageProps) {
         {/* Product Details Tabs */}
         <div className="mt-16">
           <Tabs defaultValue="description" className="w-full">
-            <TabsList>
+            <TabsList className="h-auto w-full justify-start gap-1 rounded-xl bg-slate-100 p-1">
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="specifications">Specifications</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>

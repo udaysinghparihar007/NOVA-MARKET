@@ -41,8 +41,8 @@ export function FilterSidebar({
   return (
     <div className="space-y-6">
       {categories.length > 0 && (
-        <Card className="p-4">
-          <h3 className="mb-4 font-semibold">Categories</h3>
+        <Card className="rounded-2xl border-slate-200 bg-white p-5 shadow-sm">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.12em]">Categories</h3>
           <div className="space-y-2">
             {categories.map(category => (
               <label
@@ -70,8 +70,8 @@ export function FilterSidebar({
       )}
 
       {priceRanges.length > 0 && (
-        <Card className="p-4">
-          <h3 className="mb-4 font-semibold">Price Range</h3>
+        <Card className="rounded-2xl border-slate-200 bg-white p-5 shadow-sm">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.12em]">Price range</h3>
           <div className="space-y-2">
             {priceRanges.map(range => (
               <label

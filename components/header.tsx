@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { Menu, Search, User } from 'lucide-react';
+import { Menu, Search, UserRound, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -15,8 +15,9 @@ import {
 import { CartDrawer } from '@/components/cart-drawer';
 
 const navLinks = [
-  { href: '/products', label: 'Products' },
-  { href: '/search', label: 'Search' },
+  { href: '/products', label: 'Shop all' },
+  { href: '/products?sort=newest', label: 'New arrivals' },
+  { href: '/category/electronics', label: 'Electronics' },
 ];
 
 export function Header() {
@@ -24,18 +25,21 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="border-b">
-      <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-4">
-        <Link href="/" className="text-2xl font-bold">
-          E-commerce Store
+    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-background/90 backdrop-blur-xl">
+      <div className="container mx-auto flex min-h-16 items-center justify-between gap-4 px-4">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-blue-500/20">
+            <Sparkles className="h-4 w-4" />
+          </span>
+          <span className="text-xl font-bold tracking-tight">NOVA<span className="text-primary">/</span>MARKET</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-7 lg:flex">
           {navLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               {link.label}
             </Link>
@@ -43,7 +47,7 @@ export function Header() {
           {session?.user?.role === 'ADMIN' && (
             <Link
               href="/admin/products"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               Admin
             </Link>
@@ -61,7 +65,7 @@ export function Header() {
             <div className="hidden items-center gap-2 md:flex">
               <Button asChild variant="ghost" size="icon">
                 <Link href="/profile" aria-label="Profile">
-                  <User className="h-5 w-5" />
+                  <UserRound className="h-5 w-5" />
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" onClick={() => signOut()}>
