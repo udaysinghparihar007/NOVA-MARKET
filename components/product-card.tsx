@@ -49,15 +49,15 @@ export function ProductCard({
   return (
     <Card
       data-testid="product-card"
-      className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
+      className="group relative overflow-hidden rounded-2xl border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl"
     >
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative aspect-[1.05/1] overflow-hidden bg-slate-100">
         <Link href={`/products/${slug}`} className="block">
           <Image
             src={image || '/images/placeholder.svg'}
             alt={name}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </Link>
@@ -65,7 +65,7 @@ export function ProductCard({
         {/* Badges */}
         <div className="absolute left-2 top-2 flex flex-col gap-2">
           {isOnSale && (
-            <Badge variant="destructive" className="bg-red-600 text-xs hover:bg-red-600/80">
+            <Badge variant="destructive" className="rounded-full bg-rose-500 text-xs hover:bg-rose-500/80">
               -{discountPercentage}%
             </Badge>
           )}
@@ -93,15 +93,15 @@ export function ProductCard({
         </div>
       </div>
 
-      <CardContent className="p-4">
+      <CardContent className="p-5">
         {/* Category */}
         {category && (
-          <p className="mb-1 text-xs text-muted-foreground">{category.name}</p>
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">{category.name}</p>
         )}
 
         {/* Product Name */}
         <Link href={`/products/${slug}`}>
-          <h3 className="mb-2 mt-1 line-clamp-2 text-sm font-medium transition-colors hover:text-primary">
+          <h3 className="mb-3 mt-1 line-clamp-2 text-base font-semibold transition-colors hover:text-primary">
             {name}
           </h3>
         </Link>
@@ -129,7 +129,7 @@ export function ProductCard({
 
         {/* Price */}
         <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold">{formatCurrency(price)}</span>
+          <span className="text-xl font-bold tracking-tight">{formatCurrency(price)}</span>
           {comparePrice && comparePrice > price && (
             <span className="text-sm text-muted-foreground line-through">
               {formatCurrency(comparePrice)}
@@ -139,7 +139,7 @@ export function ProductCard({
 
         {/* Stock Status */}
         {inStock ? (
-          <p className="mt-1 text-xs text-green-700">In Stock</p>
+          <p className="mt-2 text-xs font-medium text-emerald-600">In stock</p>
         ) : (
           <p className="mt-1 text-xs text-red-600">Out of Stock</p>
         )}

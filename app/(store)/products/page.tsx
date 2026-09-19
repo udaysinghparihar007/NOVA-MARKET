@@ -153,7 +153,7 @@ export default async function ProductsPage(props: ProductsPageProps) {
   const searchParams = await props.searchParams;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
       <nav className="mb-8" aria-label="Breadcrumb">
         <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -168,10 +168,11 @@ export default async function ProductsPage(props: ProductsPageProps) {
       </nav>
 
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-10 border-b border-slate-200 pb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">The collection</p>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
               All Products
             </h1>
             <p className="mt-2 text-lg text-muted-foreground">
@@ -190,9 +191,9 @@ export default async function ProductsPage(props: ProductsPageProps) {
         </div>
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col gap-8 lg:flex-row">
         {/* Filters Sidebar */}
-        <aside className="w-64 flex-shrink-0">
+        <aside className="w-full flex-shrink-0 lg:w-64">
           <FilterSidebar />
         </aside>
 

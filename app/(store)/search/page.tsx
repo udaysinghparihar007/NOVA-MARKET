@@ -217,24 +217,25 @@ export default async function SearchPage(props: SearchPageProps) {
   const query = searchParams.q || '';
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Search Header */}
       <div className="mb-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Find your next favorite</p>
+          <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
             Search Products
           </h1>
         </div>
 
         {/* Search Bar */}
         <form action="/search" method="get" className="mb-6">
-          <div className="flex max-w-2xl gap-2">
+          <div className="flex max-w-3xl gap-2">
             <div className="relative flex-1">
               <Input
                 name="q"
                 placeholder="Search for products..."
                 defaultValue={query}
-                className="pr-10"
+                className="h-12 rounded-full bg-white pr-10"
               />
               {query && (
                 <Button
@@ -249,7 +250,7 @@ export default async function SearchPage(props: SearchPageProps) {
                 </Button>
               )}
             </div>
-            <Button type="submit">
+            <Button type="submit" className="h-12 rounded-full px-6">
               <Search className="mr-2 h-4 w-4" />
               Search
             </Button>
@@ -323,9 +324,9 @@ export default async function SearchPage(props: SearchPageProps) {
         )}
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col gap-8 lg:flex-row">
         {/* Filters Sidebar */}
-        <aside className="w-64 flex-shrink-0">
+        <aside className="w-full flex-shrink-0 lg:w-64">
           <FilterSidebar />
         </aside>
 

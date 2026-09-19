@@ -59,20 +59,20 @@ export function NewsletterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+    <form onSubmit={handleSubmit} className="mx-auto mt-8 flex max-w-lg flex-col items-center gap-3 sm:flex-row sm:justify-center">
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Enter your email"
         disabled={isLoading}
-        className="w-full max-w-sm rounded-md border border-gray-700 bg-gray-800 px-4 py-2 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+        className="h-12 w-full rounded-full border border-white/20 bg-white/10 px-5 text-white placeholder-blue-100 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30 disabled:cursor-not-allowed disabled:opacity-50"
       />
       <Button 
         type="submit" 
         size="lg" 
         disabled={isLoading}
-        className="bg-blue-600 hover:bg-blue-700 disabled:cursor-not-allowed"
+        className="h-12 rounded-full bg-white px-6 text-blue-700 hover:bg-blue-50 disabled:cursor-not-allowed"
       >
         {isLoading ? 'Subscribing...' : 'Subscribe'}
       </Button>

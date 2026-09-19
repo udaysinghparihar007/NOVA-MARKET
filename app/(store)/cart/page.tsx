@@ -143,10 +143,11 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Ready when you are</p>
+        <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
           Shopping Cart
         </h1>
         <p className="mt-2 text-lg text-muted-foreground">
@@ -162,7 +163,7 @@ export default function CartPage() {
               <div
                 key={item.id}
                 data-testid="cart-item"
-                className="flex items-center space-x-4 rounded-lg border p-4"
+                className="flex items-center space-x-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
               >
                 {/* Product Image */}
                 <div className="flex-shrink-0">
@@ -258,7 +259,7 @@ export default function CartPage() {
 
         {/* Order Summary */}
         <div className="lg:col-span-1">
-          <div className="rounded-lg border bg-gray-50 p-6">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
             <h2 className="mb-4 text-lg font-semibold text-gray-900">
               Order Summary
             </h2>
