@@ -4,17 +4,19 @@
 
 NOVA/MARKET is a database-driven e-commerce application focused on consumer technology products such as smartphones, laptops, and audio devices.
 
-The project demonstrates full-stack software engineering across the storefront, server-side application layer, relational database, authentication, inventory, reviews, cart and order workflows, payments, caching, testing, and deployment.
+The project demonstrates full-stack software engineering across the customer storefront, server-side application layer, relational database, authentication and authorization, product management, inventory, reviews, cart and order workflows, product image management, caching, testing, and deployment.
 
 ---
 
 ## 🚀 Demo
 
-**Live Demo:** `https://your-deployment-url.com`
+**Live Demo:**  
+https://your-deployment-url.com
 
-**GitHub:** `https://github.com/YOUR_USERNAME/YOUR_REPOSITORY`
+**GitHub:**  
+https://github.com/YOUR_USERNAME/YOUR_REPOSITORY
 
-> Add screenshots or a short demo video here once the production deployment is available.
+> Replace the placeholder URLs above after deployment.
 
 ---
 
@@ -32,13 +34,21 @@ The project demonstrates full-stack software engineering across the storefront, 
 
 ![NOVA/MARKET Product Details](./docs/screenshots/product-details.png)
 
-> Screenshots are stored locally in `docs/screenshots/`.
+### Admin Product Management
+
+![NOVA/MARKET Admin Product Management](./docs/screenshots/admin-products.png)
+
+### Add / Edit Product
+
+![NOVA/MARKET Add Product](./docs/screenshots/admin-product-editor.png)
+
+> Screenshots are stored in `docs/screenshots/`.
 
 ---
 
 # ✨ Features
 
-## Storefront
+## 🛍️ Storefront
 
 - Technology-focused product catalog
 - Responsive product grid
@@ -49,71 +59,140 @@ The project demonstrates full-stack software engineering across the storefront, 
 - Price filtering
 - Pagination
 - Product image galleries
+- Multiple product images
 - Product variants
 - Inventory-aware availability
 - Reviews and ratings
 - SEO metadata
+- Responsive design
+- Loading and empty states
 
-## Commerce
+---
+
+## 🛒 Commerce
 
 - Persistent shopping cart
-- Order creation and history
+- Cart item management
+- Order creation
+- Order history
 - Inventory tracking
 - Stock-aware purchasing
+- Product availability checks
+- Order lifecycle management
 - Stripe checkout
 - Stripe webhook handling
-- Order lifecycle management
 
-## Authentication & Authorization
+---
+
+## 🔐 Authentication & Authorization
 
 - User authentication
 - Protected account pages
 - Role-based admin access
 - Protected administration routes
 - Customer order history
-- Admin product and inventory management
-
-## Administration
-
-- Product management
-- Category management
-- Inventory management
-- Order management
-- Customer management
-- Product publishing controls
-
-## Engineering
-
-- Server-side data fetching
-- Prisma ORM
-- PostgreSQL relational database
-- Neon-hosted database
-- Cached server queries
-- Targeted cache invalidation
-- Type-safe application code
-- Automated testing
-- Production-oriented error handling
-- Responsive UI
+- Admin-only product management
+- Server-side authorization checks
 
 ---
 
-# 🧠 Engineering Highlights
+# 🧑‍💼 Administration
 
-NOVA/MARKET was designed as more than a static e-commerce UI. The application uses a relational database and server-side application layer to keep the storefront driven by real application data.
+NOVA/MARKET includes a dedicated administration workflow for managing the technology catalog.
 
-### Database-driven catalog
+## Product Management
 
-Products, categories, images, variants, inventory, reviews, carts, and orders are stored in PostgreSQL and accessed through Prisma.
+Admins can:
 
-The UI does not rely on hardcoded product objects.
+- View products
+- Search products
+- Filter products
+- Create products
+- Edit products
+- Delete products
+- Publish and unpublish products
+- Mark products as featured
+- Manage pricing
+- Manage inventory
+- Manage low-stock thresholds
+- Manage categories
+- Manage brands
+- Manage SKUs
+- Manage variants
+- Manage tags
+- Manage descriptions
+
+## Product Editor
+
+The product editor provides a responsive two-column administration interface.
+
+It supports:
+
+- Product name
+- Automatic slug generation
+- Manual slug editing
+- Short description
+- Full description
+- Category
+- Brand
+- SKU
+- Price
+- Compare-at price
+- Cost price
+- Stock quantity
+- Low-stock threshold
+- Inventory tracking
+- Product variants
+- Product tags
+- Publishing status
+- Featured product controls
+
+## Product Image Management
+
+Admins can manage multiple images for every product.
+
+Features include:
+
+- Multiple image upload
+- JPG/PNG/WEBP validation
+- 5 MB per-image limit
+- Drag-and-drop upload
+- Image previews
+- Image ordering
+- Image deletion
+- Alt-text editing
+- Primary image selection
+- Existing image preservation during edits
+- Safe cleanup of unused image files
+
+The first ordered product image is used as the primary product image across the storefront.
+
+---
+
+# 🖼️ Product Image Gallery
+
+Customer-facing product pages include a complete product image gallery.
+
+The gallery provides:
+
+- Primary product image
+- Thumbnail navigation
+- Multiple product images
+- Accessible image controls
+- Image switching
+- Product-specific image ordering
+
+### Image Flow
 
 ```text
-PostgreSQL
-    ↓
-Prisma
-    ↓
-Server Queries / Actions
-    ↓
-Next.js
-    ↓
-React Components
+Admin uploads product images
+            ↓
+     ProductImage records
+            ↓
+    Image position/order
+            ↓
+      Primary image
+            ↓
+     Product detail page
+            ↓
+ Product cards and catalog
