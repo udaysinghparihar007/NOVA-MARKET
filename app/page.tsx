@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Headphones, Laptop, Smartphone, Sparkles, Star, Truck, ShieldCheck, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductGrid } from '@/components/product-grid';
-import { ProductCard } from '@/components/product-card';
 import { ProductGridSkeleton } from '@/components/product-grid-skeleton';
 import { NewsletterForm } from '@/components/newsletter-form';
 import { getFeaturedProducts, getNewProducts } from '@/server/queries/products';
@@ -15,10 +14,10 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Home',
   description:
-    'Discover amazing products at unbeatable prices. Shop the latest trends and bestsellers.',
+    'Discover considered technology, computing, and audio products at NOVA/MARKET.',
   openGraph: {
-    title: 'NextJS E-commerce Store - Home',
-    description: 'Discover amazing products at unbeatable prices',
+    title: 'NOVA/MARKET | Technology for everyday life',
+    description: 'Discover considered technology, computing, and audio products.',
     type: 'website',
   },
 };
@@ -34,7 +33,7 @@ async function FeaturedProducts() {
     );
   }
 
-  return <ProductGrid products={products as any} />;
+  return <ProductGrid products={products} />;
 }
 
 async function NewProducts() {
@@ -48,7 +47,7 @@ async function NewProducts() {
     );
   }
 
-  return <ProductGrid products={products.slice(0, 4) as any} />;
+  return <ProductGrid products={products.slice(0, 4)} />;
 }
 
 export default function HomePage() {

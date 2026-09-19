@@ -1,8 +1,8 @@
 {
-  "name": "nextjs-ecommerce",
+  "name": "nova-market",
   "version": "0.1.0",
   "private": true,
-  "description": "Demo e-commerce platform built with Next.js 15, TypeScript, and Prisma. Features admin dashboard, Stripe payments, newsletter subscriptions, custom 404, Docker deployment, and comprehensive testing. Educational resource for modern Next.js development patterns.",
+  "description": "NOVA/MARKET technology marketplace built with Next.js, TypeScript, Prisma, and PostgreSQL.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -28,6 +28,8 @@
     "@aws-sdk/client-s3": "^3.500.0",
     "@aws-sdk/s3-request-presigner": "^3.500.0",
     "@hookform/resolvers": "^3.3.4",
+    "@neon/config": "^1.7.2",
+    "@neon/env": "^1.4.3",
     "@next-auth/prisma-adapter": "^1.0.7",
     "@next/font": "^14.1.0",
     "@prisma/client": "^5.22.0",

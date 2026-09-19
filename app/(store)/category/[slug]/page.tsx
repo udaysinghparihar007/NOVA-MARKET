@@ -68,9 +68,11 @@ async function CategoryProductCount({ categoryId }: { categoryId: string }) {
 
 async function CategoryProducts({
   categoryId,
+  categorySlug,
   searchParams,
 }: {
   categoryId: string;
+  categorySlug: string;
   searchParams: Awaited<CategoryPageProps['searchParams']>;
 }) {
   const page = parseInt(searchParams.page || '1');
@@ -122,7 +124,7 @@ async function CategoryProducts({
           {page > 1 && (
             <Button asChild variant="outline">
               <Link
-                href={`/category/${categoryId}?${new URLSearchParams({
+                href={`/category/${categorySlug}?${new URLSearchParams({
                   ...searchParams,
                   page: (page - 1).toString(),
                 })}`}
@@ -145,7 +147,7 @@ async function CategoryProducts({
                   size="sm"
                 >
                   <Link
-                    href={`/category/${categoryId}?${new URLSearchParams({
+                    href={`/category/${categorySlug}?${new URLSearchParams({
                       ...searchParams,
                       page: pageNum.toString(),
                     })}`}
@@ -160,7 +162,7 @@ async function CategoryProducts({
           {page < result.totalPages && (
             <Button asChild variant="outline">
               <Link
-                href={`/category/${categoryId}?${new URLSearchParams({
+                href={`/category/${categorySlug}?${new URLSearchParams({
                   ...searchParams,
                   page: (page + 1).toString(),
                 })}`}
@@ -183,9 +185,6 @@ export default async function CategoryPage(props: CategoryPageProps) {
   if (!category) {
     notFound();
   }
-
-  // Get product count for this category
-  const productCount = 0; // This will be shown in CategoryProducts component instead
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -245,6 +244,7 @@ export default async function CategoryPage(props: CategoryPageProps) {
           <Suspense fallback={<ProductGridSkeleton />}>
             <CategoryProducts
               categoryId={category.id}
+              categorySlug={category.slug}
               searchParams={searchParams}
             />
           </Suspense>

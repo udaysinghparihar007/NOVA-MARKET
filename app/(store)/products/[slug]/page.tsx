@@ -68,8 +68,13 @@ export default async function ProductPage(props: ProductPageProps) {
     ? await getRelatedProducts(product.id, product.categoryId)
     : [];
 
-  const averageRating = 4.5; // This would come from reviews
-  const totalReviews = 128; // This would come from reviews
+  const totalReviews = product.reviews.length;
+  const averageRating =
+    totalReviews > 0
+      ? product.reviews.reduce((total, review) => total + review.rating, 0) /
+        totalReviews
+      : 0;
+  const availableQuantity = product.inventory[0]?.available ?? 0;
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -80,16 +85,19 @@ export default async function ProductPage(props: ProductPageProps) {
     sku: product.sku,
     brand: {
       '@type': 'Brand',
-      name: 'Store Brand',
+      name: 'NOVA/MARKET',
     },
     offers: {
       '@type': 'Offer',
       price: product.price,
       priceCurrency: 'USD',
-      availability: 'https://schema.org/InStock',
+      availability:
+        availableQuantity > 0
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
       seller: {
         '@type': 'Organization',
-        name: 'NextJS E-commerce Store',
+        name: 'NOVA/MARKET',
       },
     },
     aggregateRating: {
@@ -215,11 +223,22 @@ export default async function ProductPage(props: ProductPageProps) {
               )}
             </div>
 
-            <p className="text-base leading-7 text-muted-foreground">{product.description}</p>
+            <p className="text-base leading-7 text-muted-foreground">
+              {product.description}
+            </p>
 
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
-                <Badge variant="default" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">In Stock</Badge>
+                <Badge
+                  variant="default"
+                  className={
+                    availableQuantity > 0
+                      ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100'
+                      : 'bg-rose-100 text-rose-700 hover:bg-rose-100'
+                  }
+                >
+                  {availableQuantity > 0 ? 'In Stock' : 'Out of Stock'}
+                </Badge>
                 {product.sku && (
                   <span className="text-sm text-muted-foreground">
                     SKU: {product.sku}
@@ -227,7 +246,12 @@ export default async function ProductPage(props: ProductPageProps) {
                 )}
               </div>
 
-              <AddToCart productId={product.id} showQuantitySelector />
+              <AddToCart
+                productId={product.id}
+                showQuantitySelector
+                maxQuantity={availableQuantity}
+                disabled={availableQuantity <= 0}
+              />
 
               <div className="flex space-x-2">
                 <Button variant="outline" size="sm">
@@ -278,8 +302,7 @@ export default async function ProductPage(props: ProductPageProps) {
 
             <TabsContent value="description" className="mt-8">
               <div className="prose max-w-none">
-                <p>{product.description}</p>
-                {/* Add more detailed description content here */}
+                <p>{product.content || product.description}</p>
               </div>
             </TabsContent>
 
@@ -287,7 +310,7 @@ export default async function ProductPage(props: ProductPageProps) {
               <div className="grid gap-4">
                 <div className="grid grid-cols-2 gap-2 border-b py-2">
                   <span className="font-medium">SKU</span>
-                  <span>{product.sku}</span>
+                  <span>{product.sku || 'Not specified'}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 border-b py-2">
                   <span className="font-medium">Category</span>
@@ -295,19 +318,67 @@ export default async function ProductPage(props: ProductPageProps) {
                 </div>
                 <div className="grid grid-cols-2 gap-2 border-b py-2">
                   <span className="font-medium">Weight</span>
-                  <span>1.2 lbs</span>
+                  <span>{product.weight ? `${product.weight} lbs` : 'Not specified'}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 border-b py-2">
                   <span className="font-medium">Dimensions</span>
-                  <span>10 × 8 × 2 in</span>
+                  <span>Not specified</span>
                 </div>
+                {product.variants.map(variant => (
+                  <div
+                    key={variant.id}
+                    className="grid grid-cols-2 gap-2 border-b py-2"
+                  >
+                    <span className="font-medium">{variant.name}</span>
+                    <span>
+                      {variant.value}
+                      {variant.price ? ` (+${formatPrice(variant.price)})` : ''}
+                    </span>
+                  </div>
+                ))}
               </div>
             </TabsContent>
 
             <TabsContent value="reviews" className="mt-8">
-              <div className="py-8 text-center">
-                <p className="text-muted-foreground">Reviews coming soon...</p>
-              </div>
+              {product.reviews.length > 0 ? (
+                <div className="space-y-5">
+                  {product.reviews.map(review => (
+                    <div key={review.id} className="rounded-2xl border p-5">
+                      <div className="flex items-center gap-2">
+                        <div className="flex">
+                          {Array.from({ length: 5 }).map((_, index) => (
+                            <Star
+                              key={index}
+                              className={`h-4 w-4 ${
+                                index < review.rating
+                                  ? 'fill-yellow-400 text-yellow-400'
+                                  : 'text-slate-300'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        {review.verified && (
+                          <Badge variant="secondary">Verified purchase</Badge>
+                        )}
+                      </div>
+                      {review.title && (
+                        <h3 className="mt-3 font-semibold">{review.title}</h3>
+                      )}
+                      {review.content && (
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          {review.content}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center">
+                  <p className="text-muted-foreground">
+                    No reviews yet for this product.
+                  </p>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="shipping" className="mt-8">
@@ -349,9 +420,14 @@ export default async function ProductPage(props: ProductPageProps) {
                       ? Number(relatedProduct.comparePrice)
                       : undefined
                   }
-                  image={'/images/product-sample.svg'}
+                  image={relatedProduct.images[0]?.url}
                   status={relatedProduct.status}
-                  category={undefined}
+                  category={relatedProduct.category || undefined}
+                  inStock={
+                    relatedProduct.inventory?.[0]?.available
+                      ? relatedProduct.inventory[0].available > 0
+                      : true
+                  }
                 />
               ))}
             </div>

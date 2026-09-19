@@ -181,7 +181,7 @@ describe('Orders and confirmation', () => {
       // see the isGuestCheckoutConfirmation carve-out in proxy.ts)...
       cy.visit(`${href}/success`, { failOnStatusCode: false });
       cy.get('[data-testid="order-confirmation"]').should('not.exist');
-      cy.contains('Demo Project').should('be.visible');
+      cy.contains('NOVA/MARKET').should('be.visible');
 
       // ...but without proof of ownership (session id or login) the order
       // itself is not shown, and the plain orders list still requires login.

@@ -1,232 +1,118 @@
-# Next.js E-Commerce Platform 🛍️
+# NOVA/MARKET
 
-[![Next.js](https://img.shields.io/badge/Next.js_15.5-000?logo=next.js&logoColor=fff)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript_5.9-3178C6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma_5.22-2D3748?logo=prisma&logoColor=fff)](https://www.prisma.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+NOVA/MARKET is a database-driven technology marketplace built as a portfolio project with Next.js, TypeScript, Prisma, PostgreSQL, Tailwind CSS, and shadcn/ui. The storefront focuses on considered devices, computing, and audio products while preserving real catalog, cart, order, review, inventory, authentication, admin, and Stripe flows.
 
-> **🎓 Demo & Learning Project**  
-> A full-stack e-commerce platform built to demonstrate modern Next.js development patterns with TypeScript, Prisma, and PostgreSQL. Not intended for production use.
+## Features
 
-## ✨ What's Inside
+- Published product catalog backed by PostgreSQL and Prisma
+- Parent and child category browsing
+- Search, sorting, pagination, and price filtering
+- Product images, inventory, variants, reviews, ratings, and SEO metadata
+- Persistent cart and order history
+- NextAuth authentication with role-based admin access
+- Stripe checkout and payment webhooks
+- Admin product, inventory, order, and customer workflows
+- Cached server queries with mutation revalidation
+- Responsive storefront UI with local SVG product imagery
 
-**Core Features**
-- 🛍️ Product catalog with search, filtering & categories
-- 🛒 Shopping cart with persistent storage
-- 📧 Newsletter subscription with validation
-- 🎨 Custom 404 page with demo messaging
-- 👤 User authentication with NextAuth.js
-- 💳 Stripe payment integration (configured)
-- 📊 Admin dashboard for product & order management
+## Stack
 
-**Tech Stack**
-- **Frontend:** Next.js 15.5.6 | React 18 | TypeScript 5.9  | Tailwind CSS | shadcn/ui
-- **Backend:** Server Components | Server Actions | API Routes
-- **Database:** PostgreSQL 15 | Prisma 5.22 ORM
-- **Testing:** Jest | React Testing Library | Cypress
+- **Application:** Next.js App Router, React, TypeScript
+- **UI:** Tailwind CSS, shadcn/ui, Radix UI, Lucide
+- **Data:** PostgreSQL on Neon, Prisma ORM
+- **Auth and payments:** NextAuth, Stripe
+- **Testing:** Jest, React Testing Library, Cypress
 
-**Current Status (March 2026)**
-- ✅ All TypeScript checks passing
-- ✅ All ESLint checks passing  
-- ✅ 149/149 tests passing (100%)
-- ✅ Newsletter feature fully functional
-- ✅ Local SVG product images
-- ✅ Database migrations applied
+## Getting started
 
-## 🚀 Quick Start
+### Requirements
 
-### Prerequisites
-- Node.js 20+ 
-- PostgreSQL 15+
-- npm or yarn
+- Node.js 20+
+- PostgreSQL-compatible database
+- npm
 
-### Installation
+### Install and configure
 
 ```bash
-# Clone the repository
 git clone https://github.com/SatvikPraveen/Nextjs-Ecommerce.git
 cd Nextjs-Ecommerce
-
-# Install dependencies
 npm install
-
-# Set up environment variables
 cp .env.example .env.local
-# Edit .env.local with your database URL and API keys
+```
 
-# Set up database
+Set the required values in `.env.local`. Keep credentials out of source control:
+
+```env
+DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="replace-with-a-long-random-secret"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+Add Stripe and OAuth values only when those integrations are needed. Do not commit `.env` or `.env.local`.
+
+### Database and development
+
+```bash
 npx prisma db push
 npm run db:seed
-
-# Start development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Open [http://localhost:3000](http://localhost:3000).
 
-### Essential Environment Variables
+The seed is safe to rerun for the NOVA/MARKET technology catalog and creates the development admin/customer accounts defined by the seed configuration. Change development credentials before using the project outside a local environment.
 
-```env
-# Database (Required)
-DATABASE_URL="postgresql://user:password@localhost:5432/ecommerce"
+## Project structure
 
-# NextAuth (Required)
-NEXTAUTH_SECRET="your-secret-here"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Stripe (Optional - for payments)
-STRIPE_PUBLISHABLE_KEY="pk_test_..."
-STRIPE_SECRET_KEY="sk_test_..."
-```
-
-See [.env.example](.env.example) for complete configuration.
-
-## 📁 Project Structure
-
-```
+```text
 app/
-├── (store)/          # Customer-facing pages
-│   ├── products/     # Product catalog
-│   ├── cart/         # Shopping cart
-│   └── search/       # Search results
-├── (account)/        # User account pages
-├── admin/            # Admin dashboard
-├── api/              # API routes
-│   ├── newsletter/   # Newsletter subscription
-│   ├── stripe/       # Payment webhooks
-│   └── auth/         # Authentication
-└── not-found.tsx     # Custom 404 page
-
-components/
-├── ui/               # shadcn/ui components
-├── newsletter-form.tsx
-├── product-card.tsx
-└── cart-drawer.tsx
-
+  (store)/       Storefront catalog, search, cart, and product routes
+  (account)/     Profile and order history
+  admin/         Protected administration screens
+  api/           Auth, newsletter, and Stripe endpoints
+components/     Shared storefront, cart, form, and shadcn/ui components
+lib/             Prisma, cache, auth, and utility helpers
 server/
-├── actions/          # Server actions
-└── queries/          # Database queries
-
+  actions/       Server mutations
+  queries/       Database-backed read models
 prisma/
-├── schema.prisma     # Database schema
-└── seed.ts           # Sample data
+  schema.prisma  Relational data model
+  seed.ts        Idempotent NOVA/MARKET development catalog seed
+public/          Local product and category assets
 ```
 
-## 🛠️ Scripts
+## Useful commands
 
 ```bash
-# Development
-npm run dev           # Start dev server
-npm run build         # Build for production
-npm run start         # Start production server
-
-# Database
-npm run db:push       # Push schema changes
-npm run db:seed       # Seed with sample data
-npm run db:studio     # Open Prisma Studio
-
-# Code Quality
-npm run lint          # Run ESLint
-npm run type-check    # TypeScript type check
-npm run format        # Format with Prettier
-
-# Testing
-npm run test          # Run all tests
-npm run test:e2e      # Run Cypress tests
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm run type-check
+npm test -- --runInBand
+npm run test:e2e
+npm run db:push
+npm run db:seed
+npm run db:studio
 ```
 
-## 📚 Documentation
+## Deployment
 
-| Guide | Description |
-|-------|-------------|
-| [Quick Start](QUICKSTART.md) | Get running in 5 minutes |
-| [Dev Setup](docs/setup/DEV_SETUP.md) | Complete development environment setup |
-| [Installation](docs/setup/INSTALLATION.md) | Automated environment setup script |
-| [Contributing](docs/contributing/CONTRIBUTING.md) | How to contribute |
-| [Cheat Sheet](docs/contributing/CHEAT_SHEET.md) | Quick command reference |
-| [Project Structure](docs/project/PROJECT_STRUCTURE.md) | Detailed code organization |
-| [Roadmap](docs/project/ROADMAP.md) | Future plans |
-| [Docs Index](docs/DOCS_INDEX.md) | Complete documentation index |
+The application can be deployed to Vercel or another Node-compatible platform. Configure the production PostgreSQL/Neon connection, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, Stripe keys and webhook secret, OAuth credentials, and `NEXT_PUBLIC_APP_URL` in the deployment environment. Run Prisma migrations or `db push` according to the project's deployment policy before starting the application.
 
-## 🎯 Recent Updates
+## Engineering notes
 
-**March 2026**
-- ✅ Newsletter subscription system with database persistence
-- ✅ Custom 404 page for demo project
-- ✅ 14 local SVG product & category images
-- ✅ Fixed client component directives
-- ✅ Repository documentation reorganized
-- ✅ Footer updated to 2026
+- Storefront queries only expose published products.
+- Decimal database prices are serialized before crossing into client components.
+- Category queries include descendant categories without duplicating product records.
+- Cache keys include dynamic catalog arguments and mutations revalidate relevant tags.
+- Product images are local SVG assets mapped from database `ProductImage` records.
+- Historical order records should be preserved when catalog data is retired.
 
-**December 2025**
-- ✅ Next.js 15.5.6 upgrade
-- ✅ TypeScript strict mode - 0 errors
-- ✅ All tests passing (149/149)
-- ✅ npm audit: 0 vulnerabilities
-- ✅ Prettier formatting applied
+## Contributing
 
-## 🔐 Authentication
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) or the contributor documentation before opening a pull request. Run lint, type-checking, and the relevant test suites before submitting changes.
 
-Supported providers:
-- Email/Password
-- Google OAuth
-- GitHub OAuth
-- Discord OAuth
+## License and attribution
 
-Role-based access control for admin features.
-
-## 💳 Payments
-
-Stripe integration configured for:
-- Checkout sessions
-- Payment webhooks
-- Order fulfillment
-- Multi-currency support
-
-## 🐳 Deployment
-
-**Vercel** (Recommended)
-```bash
-# Connect your GitHub repo to Vercel
-# Add environment variables in dashboard
-# Deploy automatically on push
-```
-
-**Docker**
-```bash
-docker-compose up -d
-```
-
-Or build manually:
-```bash
-docker build -t nextjs-ecommerce .
-docker run -p 3000:3000 -e DATABASE_URL="..." nextjs-ecommerce
-```
-
-## 🤝 Contributing
-
-Contributions welcome! Please see [CONTRIBUTING.md](docs/contributing/CONTRIBUTING.md) for guidelines.
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-Built with:
-- [Next.js](https://nextjs.org/)
-- [Prisma](https://www.prisma.io/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [TypeScript](https://www.typescriptlang.org/)
-
----
-
-**Note:** This is a demonstration project for learning purposes. For production use, additional security hardening, comprehensive testing, and infrastructure setup would be required.
-# NexCart
+This project is distributed under the MIT License. See [LICENSE](LICENSE) for the complete terms and original copyright attribution.
