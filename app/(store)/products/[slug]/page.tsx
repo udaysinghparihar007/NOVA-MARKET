@@ -1,7 +1,6 @@
 // File: app/(store)/products/[slug]/page.tsx
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Heart, Share2, Truck, Shield, RotateCcw } from 'lucide-react';
 import {
@@ -16,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatPrice } from '@/lib/utils';
 import { JsonLd } from '@/components/jsonld';
+import { ProductGallery } from '@/components/product-gallery';
 
 interface ProductPageProps {
   params: Promise<{
@@ -142,41 +142,14 @@ export default async function ProductPage(props: ProductPageProps) {
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
           {/* Product Images */}
-          <div className="space-y-4">
-            <div className="aspect-square overflow-hidden rounded-[2rem] bg-slate-100">
-              <Image
-                src={product.images[0]?.url || '/images/placeholder.png'}
-                alt={product.name}
-                width={600}
-                height={600}
-                className="h-full w-full object-cover"
-                priority
-              />
-            </div>
-            {product.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {product.images.slice(1, 5).map((image, index) => (
-                  <div
-                    key={index}
-                    className="aspect-square overflow-hidden rounded-2xl bg-slate-100"
-                  >
-                    <Image
-                      src={image.url}
-                      alt={`${product.name} ${index + 2}`}
-                      width={150}
-                      height={150}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductGallery productName={product.name} images={product.images} />
 
           {/* Product Info */}
           <div className="space-y-7 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{product.category?.name || 'Featured product'}</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+                {product.brand || product.category?.name || 'Featured product'}
+              </p>
               <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-950">
                 {product.name}
               </h1>

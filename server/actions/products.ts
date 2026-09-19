@@ -11,100 +11,190 @@ import {
 } from '@/lib/uploader';
 import { sendLowStockAlert } from '@/lib/emails';
 import { redirect } from 'next/navigation';
-import type { Product, ProductImage } from '@prisma/client';
+import type { ProductImage } from '@prisma/client';
+
+type ProductImageInput = {
+  id?: string;
+  url: string;
+  altText?: string;
+  position?: number;
+};
+
+const readJson = <T>(value: FormDataEntryValue | null, fallback: T): T => {
+  if (typeof value !== 'string' || !value) return fallback;
+  return JSON.parse(value) as T;
+};
+
+const readNumber = (value: FormDataEntryValue | null) => {
+  if (typeof value !== 'string' || value.trim() === '') return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const getProductInput = (formData: FormData) => ({
+  name: String(formData.get('name') || ''),
+  slug: slugify(String(formData.get('slug') || formData.get('name') || '')),
+  description: String(formData.get('description') || ''),
+  content: String(formData.get('content') || ''),
+  brand: String(formData.get('brand') || '') || undefined,
+  price: readNumber(formData.get('price')),
+  compareAtPrice: readNumber(formData.get('compareAtPrice')),
+  costPrice: readNumber(formData.get('costPrice')),
+  sku: String(formData.get('sku') || ''),
+  inventory: readNumber(formData.get('inventory')) ?? 0,
+  categoryId: String(formData.get('categoryId') || ''),
+  images: readJson<ProductImageInput[]>(formData.get('images'), []),
+  variants: readJson<
+    Array<{ name: string; value: string; price?: number | null }>
+  >(formData.get('variants'), []),
+  tags: readJson<string[]>(formData.get('tags'), []),
+  status: String(formData.get('status') || 'DRAFT'),
+  trackQuantity: formData.get('trackQuantity') === 'true',
+  featured: formData.get('featured') === 'true',
+  lowStockThreshold: readNumber(formData.get('lowStockThreshold')) ?? 10,
+  weight: readNumber(formData.get('weight')),
+  seoTitle: String(formData.get('seoTitle') || '') || undefined,
+  seoDescription: String(formData.get('seoDescription') || '') || undefined,
+});
+
+const uploadFormImages = async (formData: FormData, productName: string) => {
+  const files = formData
+    .getAll('imageFiles')
+    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
+  const fileIds = formData.getAll('imageFileIds').filter((entry): entry is string => typeof entry === 'string');
+
+  const uploaded = await Promise.all(
+    files.map(async (file, index) => {
+      const result = await uploadImageWithVariants(file, 'products');
+      return {
+        id: fileIds[index] || file.name,
+        url: result.original.url,
+        altText: `${productName} product image`,
+      };
+    })
+  );
+
+  return uploaded;
+};
+
+const orderImages = (
+  existingImages: ProductImageInput[],
+  uploadedImages: ProductImageInput[],
+  order: string[]
+) => {
+  const byId = new Map(
+    [...existingImages, ...uploadedImages]
+      .filter(image => image.id || image.url)
+      .map(image => [image.id || image.url, image])
+  );
+  return (order.length ? order : [...byId.keys()])
+    .map(key => byId.get(key))
+    .filter((image): image is ProductImageInput => Boolean(image));
+};
+
+const revalidateProductCatalog = () => {
+  revalidateTag('products', 'max');
+  revalidateTag('product', 'max');
+  revalidateTag('categories', 'max');
+  revalidateTag('category', 'max');
+};
+
+const deleteImageIfUnreferenced = async (image: ProductImage) => {
+  const references = await prisma.productImage.count({
+    where: { url: image.url, NOT: { id: image.id } },
+  });
+  if (references === 0) await deleteImageWithVariants(image.url);
+};
 
 export async function createProduct(formData: FormData) {
   try {
     await requirePermission(PERMISSIONS.PRODUCT_CREATE);
-
-    const productData = {
-      name: formData.get('name') as string,
-      description: formData.get('description') as string,
-      price: parseFloat(formData.get('price') as string),
-      compareAtPrice: formData.get('compareAtPrice')
-        ? parseFloat(formData.get('compareAtPrice') as string)
-        : undefined,
-      sku: formData.get('sku') as string,
-      inventory: parseInt(formData.get('inventory') as string),
-      categoryId: formData.get('categoryId') as string,
-      images: JSON.parse(formData.get('images') as string),
-      tags: JSON.parse((formData.get('tags') as string) || '[]'),
-      status: (formData.get('status') as string) || 'DRAFT',
-      weight: formData.get('weight')
-        ? parseFloat(formData.get('weight') as string)
-        : undefined,
-      dimensions: formData.get('dimensions')
-        ? JSON.parse(formData.get('dimensions') as string)
-        : undefined,
-      seoTitle: (formData.get('seoTitle') as string) || undefined,
-      seoDescription: (formData.get('seoDescription') as string) || undefined,
-    };
-
-    const validatedData = createProductSchema.parse(productData);
-
-    // Generate slug from name
-    const slug = validatedData.name
-      .toLowerCase()
-      .replace(/[^a-z0-9 -]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-
-    // Check if SKU already exists
-    const existingSku = await prisma.product.findUnique({
-      where: { sku: validatedData.sku },
+    const input = getProductInput(formData);
+    const uploadedImages = await uploadFormImages(formData, input.name);
+    const imageOrder = formData.getAll('imageOrder').filter((entry): entry is string => typeof entry === 'string');
+    input.images = orderImages(input.images, uploadedImages, imageOrder);
+    const validatedData = createProductSchema.parse({
+      ...input,
+      price: input.price,
+      images: input.images,
     });
 
-    if (existingSku) {
-      return { success: false, error: 'SKU already exists' };
+    const [existingSku, existingSlug] = await Promise.all([
+      prisma.product.findUnique({ where: { sku: validatedData.sku } }),
+      prisma.product.findUnique({ where: { slug: validatedData.slug } }),
+    ]);
+    if (existingSku) return { success: false, error: 'SKU already exists' };
+    if (existingSlug) return { success: false, error: 'Slug already exists' };
+    if (validatedData.status === 'PUBLISHED' && !validatedData.images.length) {
+      return { success: false, error: 'Published products require an image' };
     }
 
-    // Extract inventory and images since they're relations
-    const { inventory, images, ...productCreateData } = validatedData;
-
-    const product = await prisma.product.create({
-      data: {
-        name: productCreateData.name,
-        slug: `${slug}-${Date.now()}`,
-        description: productCreateData.description,
-        price: productCreateData.price,
-        comparePrice: productCreateData.compareAtPrice,
-        sku: productCreateData.sku,
-        categoryId: productCreateData.categoryId,
-        tags: productCreateData.tags || [],
-        status: productCreateData.status,
-        weight: productCreateData.weight,
-        seoTitle: productCreateData.seoTitle,
-        seoDescription: productCreateData.seoDescription,
-        images: {
-          create: (images as string[]).map((url, index) => ({
-            url,
-            position: index,
-            altText: productCreateData.name,
-          })),
-        },
-      },
-      include: {
-        images: true,
-      },
-    });
-
-    // Create inventory record for the product
-    if (inventory > 0) {
-      await prisma.inventory.create({
+    const product = await prisma.$transaction(async tx => {
+      const created = await tx.product.create({
         data: {
-          productId: product.id,
-          quantity: inventory,
-          available: inventory,
+          name: validatedData.name,
+          slug: validatedData.slug,
+          description: validatedData.description,
+          content: validatedData.content,
+          brand: validatedData.brand,
+          price: validatedData.price,
+          comparePrice: validatedData.compareAtPrice,
+          costPrice: validatedData.costPrice,
+          sku: validatedData.sku,
+          categoryId: validatedData.categoryId,
+          tags: validatedData.tags,
+          status: validatedData.status,
+          trackQuantity: validatedData.trackQuantity,
+          featured: validatedData.featured,
+          lowStockThreshold: validatedData.lowStockThreshold,
+          weight: validatedData.weight,
+          seoTitle: validatedData.seoTitle,
+          seoDescription: validatedData.seoDescription,
+        },
+      });
+
+      await tx.productImage.createMany({
+        data: validatedData.images.map((image, position) => ({
+          productId: created.id,
+          url: typeof image === 'string' ? image : image.url,
+          altText: typeof image === 'string' ? validatedData.name : image.altText || validatedData.name,
+          position,
+        })),
+      });
+
+      await tx.inventory.create({
+        data: {
+          productId: created.id,
+          quantity: validatedData.inventory ?? 0,
+          available: validatedData.inventory ?? 0,
           reserved: 0,
         },
       });
-    }
 
-    revalidateTag('products', 'max');
-    revalidateTag('categories', 'max');
+      if (validatedData.variants.length) {
+        await tx.productVariant.createMany({
+          data: validatedData.variants.map((variant, position) => ({
+            productId: created.id,
+            name: variant.name,
+            value: variant.value,
+            price: variant.price ?? null,
+            position,
+          })),
+        });
+      }
 
-    return { success: true, product };
+      return created;
+    });
+
+    revalidateProductCatalog();
+    return { success: true, product: { id: product.id, slug: product.slug } };
   } catch (error) {
     console.error('Create product error:', error);
     return { success: false, error: 'Failed to create product' };
@@ -114,31 +204,14 @@ export async function createProduct(formData: FormData) {
 export async function updateProduct(productId: string, formData: FormData) {
   try {
     await requirePermission(PERMISSIONS.PRODUCT_UPDATE);
-
-    const productData = {
-      name: formData.get('name') as string,
-      description: formData.get('description') as string,
-      price: parseFloat(formData.get('price') as string),
-      compareAtPrice: formData.get('compareAtPrice')
-        ? parseFloat(formData.get('compareAtPrice') as string)
-        : undefined,
-      sku: formData.get('sku') as string,
-      inventory: parseInt(formData.get('inventory') as string),
-      categoryId: formData.get('categoryId') as string,
-      images: JSON.parse(formData.get('images') as string),
-      tags: JSON.parse((formData.get('tags') as string) || '[]'),
-      status: (formData.get('status') as string) || 'DRAFT',
-      weight: formData.get('weight')
-        ? parseFloat(formData.get('weight') as string)
-        : undefined,
-      dimensions: formData.get('dimensions')
-        ? JSON.parse(formData.get('dimensions') as string)
-        : undefined,
-      seoTitle: (formData.get('seoTitle') as string) || undefined,
-      seoDescription: (formData.get('seoDescription') as string) || undefined,
-    };
-
-    const validatedData = updateProductSchema.parse(productData);
+    const input = getProductInput(formData);
+    const uploadedImages = await uploadFormImages(formData, input.name);
+    const imageOrder = formData.getAll('imageOrder').filter((entry): entry is string => typeof entry === 'string');
+    const inputImages = orderImages(input.images, uploadedImages, imageOrder);
+    const validatedData = updateProductSchema.parse({
+      ...input,
+      images: inputImages,
+    });
 
     // Check if SKU already exists for other products
     if (validatedData.sku) {
@@ -154,76 +227,102 @@ export async function updateProduct(productId: string, formData: FormData) {
       }
     }
 
-    // Extract inventory and images since they're relations
-    const { inventory, images, ...productUpdateData } = validatedData;
-
-    // Delete old images if new ones provided
-    if (images && (images as string[]).length > 0) {
-      await prisma.productImage.deleteMany({
-        where: { productId },
-      });
+    const existing = await prisma.product.findUnique({
+      where: { id: productId },
+      include: { images: true, inventory: true },
+    });
+    if (!existing) return { success: false, error: 'Product not found' };
+    if (validatedData.status === 'PUBLISHED' && !validatedData.images?.length) {
+      return { success: false, error: 'Published products require an image' };
     }
 
-    const product = await prisma.product.update({
-      where: { id: productId },
-      data: {
-        name: productUpdateData.name,
-        description: productUpdateData.description,
-        price: productUpdateData.price,
-        comparePrice: productUpdateData.compareAtPrice,
-        sku: productUpdateData.sku,
-        categoryId: productUpdateData.categoryId,
-        tags: productUpdateData.tags,
-        status: productUpdateData.status,
-        weight: productUpdateData.weight,
-        seoTitle: productUpdateData.seoTitle,
-        seoDescription: productUpdateData.seoDescription,
-        images:
-          images && (images as string[]).length > 0
-            ? {
-                create: (images as string[]).map((url, index) => ({
-                  url,
-                  position: index,
-                  altText: productUpdateData.name || 'Product image',
-                })),
-              }
-            : undefined,
-      },
-      include: {
-        images: true,
-      },
-    });
+    const keptImages = (validatedData.images || []).filter(
+      image => typeof image !== 'string' && image.id
+    ) as ProductImageInput[];
+    const keptIds = new Set(keptImages.map(image => image.id));
+    const removedImages = existing.images.filter(image => !keptIds.has(image.id));
 
-    // Update inventory if provided
-    if (inventory !== undefined) {
-      const existingInventory = await prisma.inventory.findUnique({
-        where: { productId },
+    const product = await prisma.$transaction(async tx => {
+      const updated = await tx.product.update({
+        where: { id: productId },
+        data: {
+          name: validatedData.name,
+          slug: validatedData.slug,
+          description: validatedData.description,
+          content: validatedData.content,
+          brand: validatedData.brand,
+          price: validatedData.price,
+          comparePrice: validatedData.compareAtPrice,
+          costPrice: validatedData.costPrice,
+          sku: validatedData.sku,
+          categoryId: validatedData.categoryId,
+          tags: validatedData.tags,
+          status: validatedData.status,
+          trackQuantity: validatedData.trackQuantity,
+          featured: validatedData.featured,
+          lowStockThreshold: validatedData.lowStockThreshold,
+          weight: validatedData.weight,
+          seoTitle: validatedData.seoTitle,
+          seoDescription: validatedData.seoDescription,
+        },
       });
 
-      if (existingInventory) {
-        await prisma.inventory.update({
+      await tx.productImage.deleteMany({ where: { productId } });
+      await tx.productImage.createMany({
+        data: (validatedData.images || []).map((image, position) => ({
+          productId,
+          url: typeof image === 'string' ? image : image.url,
+          altText: typeof image === 'string' ? validatedData.name : image.altText || validatedData.name,
+          position,
+        })),
+      });
+
+      await tx.productVariant.deleteMany({ where: { productId } });
+      if (validatedData.variants?.length) {
+        await tx.productVariant.createMany({
+          data: validatedData.variants.map((variant, position) => ({
+            productId,
+            name: variant.name,
+            value: variant.value,
+            price: variant.price ?? null,
+            position,
+          })),
+        });
+      }
+
+      const inventory = existing.inventory[0];
+      if (inventory) {
+        await tx.inventory.update({
           where: { productId },
           data: {
-            quantity: inventory,
-            available: Math.max(0, inventory - existingInventory.reserved),
+            quantity: validatedData.inventory ?? 0,
+            available: Math.max(0, (validatedData.inventory ?? 0) - inventory.reserved),
           },
         });
       } else {
-        await prisma.inventory.create({
+        await tx.inventory.create({
           data: {
             productId,
-            quantity: inventory,
-            available: inventory,
+            quantity: validatedData.inventory ?? 0,
+            available: validatedData.inventory ?? 0,
             reserved: 0,
           },
         });
       }
-    }
 
-    revalidateTag('products', 'max');
-    revalidateTag('product', 'max');
+      return updated;
+    });
 
-    return { success: true, product };
+    await Promise.all(
+      removedImages.map(image =>
+        deleteImageIfUnreferenced(image).catch(error => {
+          console.error(`Failed to delete removed image ${image.url}:`, error);
+        })
+      )
+    );
+
+    revalidateProductCatalog();
+    return { success: true, product: { id: product.id, slug: product.slug } };
   } catch (error) {
     console.error('Update product error:', error);
     return { success: false, error: 'Failed to update product' };
@@ -246,7 +345,7 @@ export async function deleteProduct(productId: string) {
     // Delete product images from storage
     for (const image of product.images) {
       try {
-        await deleteImageWithVariants(image.url);
+        await deleteImageIfUnreferenced(image);
       } catch (error) {
         console.error(`Failed to delete image ${image.url}:`, error);
       }
@@ -498,7 +597,7 @@ export async function deleteProductImage(productId: string, imageId: string) {
     }
 
     try {
-      await deleteImageWithVariants(image.url);
+      await deleteImageIfUnreferenced(image);
     } catch (error) {
       console.error(`Failed to delete image from storage:`, error);
     }

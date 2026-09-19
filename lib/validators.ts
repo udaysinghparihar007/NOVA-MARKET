@@ -47,15 +47,48 @@ export const newPasswordSchema = z
 // Product schemas
 export const createProductSchema = z.object({
   name: z.string().min(1, 'Product name is required').max(255),
+  slug: z
+    .string()
+    .min(1, 'Slug is required')
+    .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
+  content: z.string().optional(),
+  brand: z.string().max(100).optional(),
   price: z.number().min(0.01, 'Price must be greater than 0'),
   compareAtPrice: z.number().min(0).optional(),
+  costPrice: z.number().min(0).optional(),
   sku: z.string().min(1, 'SKU is required').max(100),
   inventory: z.number().int().min(0, 'Inventory cannot be negative'),
   categoryId: z.string().min(1, 'Category is required'),
-  images: z.array(z.string().url()).min(1, 'At least one image is required'),
+  images: z
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          id: z.string().optional(),
+          url: z.string(),
+          altText: z.string().optional(),
+          position: z.number().int().optional(),
+        }),
+      ])
+    )
+    .optional()
+    .default([]),
+  variants: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        value: z.string().min(1),
+        price: z.number().min(0).nullable().optional(),
+      })
+    )
+    .optional()
+    .default([]),
   tags: z.array(z.string()).optional().default([]),
   status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).default('DRAFT'),
+  trackQuantity: z.boolean().default(true),
+  featured: z.boolean().default(false),
+  lowStockThreshold: z.number().int().min(0).default(10),
   weight: z.number().min(0).optional(),
   dimensions: z
     .object({
@@ -72,6 +105,7 @@ export const updateProductSchema = createProductSchema.partial();
 
 export const productFilterSchema = z.object({
   category: z.string().optional(),
+  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
   minPrice: z.number().min(0).optional(),
   maxPrice: z.number().min(0).optional(),
   tags: z.array(z.string()).optional(),

@@ -8,6 +8,7 @@ import { ProductGridSkeleton } from '@/components/product-grid-skeleton';
 import { NewsletterForm } from '@/components/newsletter-form';
 import { getFeaturedProducts, getNewProducts } from '@/server/queries/products';
 import { Metadata } from 'next';
+import { FeaturedDropSlider } from '@/components/featured-drop-slider';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,6 +51,14 @@ async function NewProducts() {
   return <ProductGrid products={products.slice(0, 4)} />;
 }
 
+async function FeaturedDrop() {
+  const products = (await getFeaturedProducts(4)).slice(0, 4);
+
+  return (
+    <FeaturedDropSlider products={products} />
+  );
+}
+
 export default function HomePage() {
   const trustItems = [
     { Icon: Truck, title: 'Free shipping', copy: 'On orders over $100' },
@@ -90,18 +99,7 @@ export default function HomePage() {
           </div>
           <div className="relative mx-auto w-full max-w-lg">
             <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-blue-500/30 to-cyan-300/10 blur-2xl" />
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-800 to-slate-900 p-7 shadow-2xl">
-              <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                <span>Featured drop</span><span className="text-blue-300">01 / 03</span>
-              </div>
-              <div className="mt-8 flex aspect-square items-center justify-center rounded-3xl bg-gradient-to-br from-blue-500/20 via-slate-800 to-cyan-400/10">
-                <Headphones className="h-40 w-40 text-blue-300 drop-shadow-[0_20px_35px_rgba(96,165,250,.25)] sm:h-52 sm:w-52" strokeWidth={1} />
-              </div>
-              <div className="mt-6 flex items-end justify-between gap-4">
-                <div><p className="text-xl font-semibold text-white">Sound, refined.</p><p className="mt-1 text-sm text-slate-400">Premium audio for every moment.</p></div>
-                <Link href="/products" className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-slate-950 transition-transform hover:scale-105"><ArrowUpRight className="h-5 w-5" /></Link>
-              </div>
-            </div>
+            <FeaturedDrop />
           </div>
         </div>
       </section>

@@ -17,14 +17,15 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#111827',
+          background: '#020617',
           color: '#ffffff',
-          fontSize: 20,
-          fontWeight: 700,
-          borderRadius: 6,
+          fontSize: 22,
+          fontWeight: 800,
+          borderRadius: 10,
+          letterSpacing: '-2px',
         }}
       >
-        N
+        N/
       </div>
     ),
     { ...size }

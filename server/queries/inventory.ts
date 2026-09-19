@@ -49,6 +49,7 @@ export async function getInventoryData(options?: {
           sku: true,
           price: true,
           status: true,
+          lowStockThreshold: true,
           inventory: {
             select: {
               available: true,
@@ -70,14 +71,14 @@ export async function getInventoryData(options?: {
       const available = product.inventory?.[0]?.available ?? 0;
       let status: 'in-stock' | 'low-stock' | 'out-of-stock' = 'in-stock';
       if (available === 0) status = 'out-of-stock';
-      else if (available < 10) status = 'low-stock';
+      else if (available <= product.lowStockThreshold) status = 'low-stock';
 
       return {
         id: product.id,
         name: product.name,
         sku: product.sku || 'N/A',
         quantity: available,
-        reorderLevel: 10,
+        reorderLevel: product.lowStockThreshold,
         status,
       };
     });

@@ -6,6 +6,8 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import sharp from 'sharp';
+import { mkdir, unlink, writeFile } from 'fs/promises';
+import path from 'path';
 
 // S3 Configuration
 const s3Client = new S3Client({
@@ -56,6 +58,13 @@ const ALLOWED_DOCUMENT_TYPES = [
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+
+const hasS3Configuration = Boolean(
+  process.env.AWS_REGION &&
+    process.env.AWS_ACCESS_KEY_ID &&
+    process.env.AWS_SECRET_ACCESS_KEY &&
+    process.env.AWS_S3_BUCKET_NAME
+);
 
 // Validate file
 export const validateFile = (
@@ -142,7 +151,25 @@ export const uploadImageWithVariants = async (
   const baseName = fileName.replace(/\.[^/.]+$/, '');
   const extension = fileName.split('.').pop();
 
-  // Upload original
+  if (!hasS3Configuration) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Image storage is not configured for production');
+    }
+
+    const publicDirectory = path.join(process.cwd(), 'public', 'images', folder);
+    await mkdir(publicDirectory, { recursive: true });
+    await writeFile(path.join(publicDirectory, fileName.split('/').pop()!), buffer);
+
+    return {
+      original: {
+        url: `/images/${folder}/${fileName.split('/').pop()}`,
+        key: fileName,
+        size: buffer.length,
+      },
+      variants: {},
+    };
+  }
+
   const original = await uploadToS3(buffer, fileName, file.type);
 
   // Create and upload variants
@@ -211,6 +238,16 @@ export const extractKeyFromUrl = (url: string): string => {
 export const deleteImageWithVariants = async (
   originalUrl: string
 ): Promise<void> => {
+  if (originalUrl.startsWith('/')) {
+    const filePath = path.join(process.cwd(), 'public', originalUrl);
+    try {
+      await unlink(filePath);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    }
+    return;
+  }
+
   const key = extractKeyFromUrl(originalUrl);
   const baseName = key.replace(/\.[^/.]+$/, '');
 

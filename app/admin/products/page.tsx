@@ -35,12 +35,23 @@ async function ProductsList({
   const search = searchParams.search || '';
   const category = searchParams.category || '';
   const status = searchParams.status || '';
+  const categoryFilter =
+    category === 'all-categories' ? undefined : category || undefined;
+  const statusFilter =
+    status === 'published'
+      ? 'PUBLISHED'
+      : status === 'draft'
+        ? 'DRAFT'
+        : status === 'archived'
+          ? 'ARCHIVED'
+          : undefined;
 
   const result = await getProducts({
     page,
     limit: 20,
     search,
-    category,
+    category: categoryFilter,
+    status: statusFilter,
     sortBy: 'createdAt',
     sortOrder: 'desc',
   });
@@ -66,12 +77,15 @@ async function ProductsList({
       </div>
 
       <ProductsDataTable
-        data={result.products.map((p: any) => ({
+        data={result.products.map(p => ({
           id: p.id,
           name: p.name,
+          slug: p.slug,
+          image: p.images[0]?.url,
+          category: p.category?.name,
           sku: p.sku || '',
           price: Number(p.price),
-          stock: 0,
+          stock: p.inventory[0]?.available ?? 0,
           status: p.status === 'PUBLISHED' ? 'active' : 'inactive',
         }))}
         isLoading={false}
@@ -109,12 +123,12 @@ export default async function AdminProductsPage(props: AdminProductsPageProps) {
           />
         </div>
 
-        <Select defaultValue={searchParams.category}>
+        <Select defaultValue={searchParams.category || 'all-categories'}>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
+            <SelectItem value="all-categories">All Categories</SelectItem>
             <SelectItem value="electronics">Electronics</SelectItem>
             <SelectItem value="smartphones">Smartphones</SelectItem>
             <SelectItem value="laptops">Laptops</SelectItem>
@@ -122,12 +136,12 @@ export default async function AdminProductsPage(props: AdminProductsPageProps) {
           </SelectContent>
         </Select>
 
-        <Select defaultValue={searchParams.status}>
+        <Select defaultValue={searchParams.status || 'all-statuses'}>
           <SelectTrigger className="w-32">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Status</SelectItem>
+            <SelectItem value="all-statuses">All Status</SelectItem>
             <SelectItem value="published">Published</SelectItem>
             <SelectItem value="draft">Draft</SelectItem>
             <SelectItem value="archived">Archived</SelectItem>

@@ -1,118 +1,198 @@
 # NOVA/MARKET
 
-NOVA/MARKET is a database-driven technology marketplace built as a portfolio project with Next.js, TypeScript, Prisma, PostgreSQL, Tailwind CSS, and shadcn/ui. The storefront focuses on considered devices, computing, and audio products while preserving real catalog, cart, order, review, inventory, authentication, admin, and Stripe flows.
+> A full-stack technology e-commerce platform built with Next.js, TypeScript, Prisma, PostgreSQL, and Neon.
 
-## Features
+NOVA/MARKET is a database-driven e-commerce application focused on consumer technology products such as smartphones, laptops, and audio devices.
 
-- Published product catalog backed by PostgreSQL and Prisma
-- Parent and child category browsing
-- Search, sorting, pagination, and price filtering
-- Product images, inventory, variants, reviews, ratings, and SEO metadata
-- Persistent cart and order history
-- NextAuth authentication with role-based admin access
-- Stripe checkout and payment webhooks
-- Admin product, inventory, order, and customer workflows
-- Cached server queries with mutation revalidation
-- Responsive storefront UI with local SVG product imagery
+The project demonstrates full-stack software engineering across the customer storefront, server-side application layer, relational database, authentication and authorization, product management, inventory, reviews, cart and order workflows, product image management, caching, testing, and deployment.
 
-## Stack
+---
 
-- **Application:** Next.js App Router, React, TypeScript
-- **UI:** Tailwind CSS, shadcn/ui, Radix UI, Lucide
-- **Data:** PostgreSQL on Neon, Prisma ORM
-- **Auth and payments:** NextAuth, Stripe
-- **Testing:** Jest, React Testing Library, Cypress
+## 🚀 Demo
 
-## Getting started
+**Live Demo:**  
+https://your-deployment-url.com
 
-### Requirements
+**GitHub:**  
+https://github.com/YOUR_USERNAME/YOUR_REPOSITORY
 
-- Node.js 20+
-- PostgreSQL-compatible database
-- npm
+> Replace the placeholder URLs above after deployment.
 
-### Install and configure
+---
 
-```bash
-git clone https://github.com/SatvikPraveen/Nextjs-Ecommerce.git
-cd Nextjs-Ecommerce
-npm install
-cp .env.example .env.local
-```
+## 📸 Preview
 
-Set the required values in `.env.local`. Keep credentials out of source control:
+### Storefront
 
-```env
-DATABASE_URL="postgresql://..."
-NEXTAUTH_SECRET="replace-with-a-long-random-secret"
-NEXTAUTH_URL="http://localhost:3000"
-```
+![NOVA/MARKET Homepage](./docs/screenshots/homepage.png)
 
-Add Stripe and OAuth values only when those integrations are needed. Do not commit `.env` or `.env.local`.
+### Product Catalog
 
-### Database and development
+![NOVA/MARKET Product Catalog](./docs/screenshots/products.png)
 
-```bash
-npx prisma db push
-npm run db:seed
-npm run dev
-```
+### Product Details
 
-Open [http://localhost:3000](http://localhost:3000).
+![NOVA/MARKET Product Details](./docs/screenshots/product-details.png)
 
-The seed is safe to rerun for the NOVA/MARKET technology catalog and creates the development admin/customer accounts defined by the seed configuration. Change development credentials before using the project outside a local environment.
+### Admin Product Management
 
-## Project structure
+![NOVA/MARKET Admin Product Management](./docs/screenshots/admin-products.png)
+
+### Add / Edit Product
+
+![NOVA/MARKET Add Product](./docs/screenshots/admin-product-editor.png)
+
+> Screenshots are stored in `docs/screenshots/`.
+
+---
+
+# ✨ Features
+
+## 🛍️ Storefront
+
+- Technology-focused product catalog
+- Responsive product grid
+- Product detail pages
+- Hierarchical category navigation
+- Product search
+- Sorting
+- Price filtering
+- Pagination
+- Product image galleries
+- Multiple product images
+- Product variants
+- Inventory-aware availability
+- Reviews and ratings
+- SEO metadata
+- Responsive design
+- Loading and empty states
+
+---
+
+## 🛒 Commerce
+
+- Persistent shopping cart
+- Cart item management
+- Order creation
+- Order history
+- Inventory tracking
+- Stock-aware purchasing
+- Product availability checks
+- Order lifecycle management
+- Stripe checkout
+- Stripe webhook handling
+
+---
+
+## 🔐 Authentication & Authorization
+
+- User authentication
+- Protected account pages
+- Role-based admin access
+- Protected administration routes
+- Customer order history
+- Admin-only product management
+- Server-side authorization checks
+
+---
+
+# 🧑‍💼 Administration
+
+NOVA/MARKET includes a dedicated administration workflow for managing the technology catalog.
+
+## Product Management
+
+Admins can:
+
+- View products
+- Search products
+- Filter products
+- Create products
+- Edit products
+- Delete products
+- Publish and unpublish products
+- Mark products as featured
+- Manage pricing
+- Manage inventory
+- Manage low-stock thresholds
+- Manage categories
+- Manage brands
+- Manage SKUs
+- Manage variants
+- Manage tags
+- Manage descriptions
+
+## Product Editor
+
+The product editor provides a responsive two-column administration interface.
+
+It supports:
+
+- Product name
+- Automatic slug generation
+- Manual slug editing
+- Short description
+- Full description
+- Category
+- Brand
+- SKU
+- Price
+- Compare-at price
+- Cost price
+- Stock quantity
+- Low-stock threshold
+- Inventory tracking
+- Product variants
+- Product tags
+- Publishing status
+- Featured product controls
+
+## Product Image Management
+
+Admins can manage multiple images for every product.
+
+Features include:
+
+- Multiple image upload
+- JPG/PNG/WEBP validation
+- 5 MB per-image limit
+- Drag-and-drop upload
+- Image previews
+- Image ordering
+- Image deletion
+- Alt-text editing
+- Primary image selection
+- Existing image preservation during edits
+- Safe cleanup of unused image files
+
+The first ordered product image is used as the primary product image across the storefront.
+
+---
+
+# 🖼️ Product Image Gallery
+
+Customer-facing product pages include a complete product image gallery.
+
+The gallery provides:
+
+- Primary product image
+- Thumbnail navigation
+- Multiple product images
+- Accessible image controls
+- Image switching
+- Product-specific image ordering
+
+### Image Flow
 
 ```text
-app/
-  (store)/       Storefront catalog, search, cart, and product routes
-  (account)/     Profile and order history
-  admin/         Protected administration screens
-  api/           Auth, newsletter, and Stripe endpoints
-components/     Shared storefront, cart, form, and shadcn/ui components
-lib/             Prisma, cache, auth, and utility helpers
-server/
-  actions/       Server mutations
-  queries/       Database-backed read models
-prisma/
-  schema.prisma  Relational data model
-  seed.ts        Idempotent NOVA/MARKET development catalog seed
-public/          Local product and category assets
-```
-
-## Useful commands
-
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run type-check
-npm test -- --runInBand
-npm run test:e2e
-npm run db:push
-npm run db:seed
-npm run db:studio
-```
-
-## Deployment
-
-The application can be deployed to Vercel or another Node-compatible platform. Configure the production PostgreSQL/Neon connection, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, Stripe keys and webhook secret, OAuth credentials, and `NEXT_PUBLIC_APP_URL` in the deployment environment. Run Prisma migrations or `db push` according to the project's deployment policy before starting the application.
-
-## Engineering notes
-
-- Storefront queries only expose published products.
-- Decimal database prices are serialized before crossing into client components.
-- Category queries include descendant categories without duplicating product records.
-- Cache keys include dynamic catalog arguments and mutations revalidate relevant tags.
-- Product images are local SVG assets mapped from database `ProductImage` records.
-- Historical order records should be preserved when catalog data is retired.
-
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) or the contributor documentation before opening a pull request. Run lint, type-checking, and the relevant test suites before submitting changes.
-
-## License and attribution
-
-This project is distributed under the MIT License. See [LICENSE](LICENSE) for the complete terms and original copyright attribution.
+Admin uploads product images
+            ↓
+     ProductImage records
+            ↓
+    Image position/order
+            ↓
+      Primary image
+            ↓
+     Product detail page
+            ↓
+ Product cards and catalog
