@@ -123,10 +123,9 @@ export default async function AdminInventoryPage(props: AdminInventoryPageProps)
           <SelectContent>
             <SelectItem value="">All Categories</SelectItem>
             <SelectItem value="electronics">Electronics</SelectItem>
-            <SelectItem value="clothing">Clothing</SelectItem>
-            <SelectItem value="books">Books</SelectItem>
-            <SelectItem value="home">Home & Garden</SelectItem>
-            <SelectItem value="sports">Sports</SelectItem>
+            <SelectItem value="smartphones">Smartphones</SelectItem>
+            <SelectItem value="laptops">Laptops</SelectItem>
+            <SelectItem value="audio">Audio</SelectItem>
           </SelectContent>
         </Select>
 

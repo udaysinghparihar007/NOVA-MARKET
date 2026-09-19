@@ -258,6 +258,7 @@ export async function deleteProduct(productId: string) {
     });
 
     revalidateTag('products', 'max');
+    revalidateTag('product', 'max');
     revalidateTag('categories', 'max');
 
     return { success: true };

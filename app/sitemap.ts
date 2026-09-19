@@ -1,6 +1,7 @@
 // File: app/sitemap.ts
 import { MetadataRoute } from 'next';
 import { getAllProducts } from '@/server/queries/products';
+import prisma from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
@@ -52,27 +53,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Category routes (you might want to fetch these dynamically too)
-  const categoryRoutes = [
-    {
-      url: `${baseUrl}/category/electronics`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/category/clothing`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/category/books`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-  ];
+  const categories = await prisma.category.findMany({
+    select: { slug: true, updatedAt: true },
+  });
+  const categoryRoutes = categories.map(category => ({
+    url: `${baseUrl}/category/${category.slug}`,
+    lastModified: new Date(category.updatedAt),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
 
   return [...staticRoutes, ...productRoutes, ...categoryRoutes];
 }

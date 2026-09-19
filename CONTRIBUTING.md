@@ -1,6 +1,6 @@
 # Contributing to Next.js E-Commerce Platform 🤝
 
-Thank you for your interest in contributing! This is a **demo/learning project** built with modern Next.js best practices. We welcome contributions that help improve the codebase as an educational resource.
+Thank you for your interest in contributing to NOVA/MARKET, a portfolio technology marketplace built with modern Next.js practices. Contributions that improve reliability, accessibility, catalog workflows, and documentation are welcome.
 
 > 📚 **Detailed Guide**: For comprehensive contributing guidelines, see [docs/contributing/CONTRIBUTING.md](docs/contributing/CONTRIBUTING.md)
 
@@ -308,7 +308,7 @@ Nextjs-Ecommerce/
 - Help others learn and grow
 - Celebrate contributions of all sizes
 
-This is a learning project - questions and beginner contributions are welcome! 🎓
+Questions and contributions are welcome. Please keep changes focused and preserve the existing storefront, authentication, order, and payment architecture.
 
 ## 📄 License
 
@@ -318,4 +318,4 @@ By contributing, you agree that your contributions will be licensed under the MI
 
 **Thank you for contributing! 🎉**
 
-Every contribution helps make this a better learning resource for the Next.js community.
+Every contribution helps make NOVA/MARKET a clearer, more reliable reference implementation.

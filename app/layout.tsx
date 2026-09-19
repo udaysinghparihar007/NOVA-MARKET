@@ -14,13 +14,14 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: {
-    default: 'NextJS E-commerce Store',
-    template: '%s | NextJS E-commerce',
+    default: 'NOVA/MARKET',
+    template: '%s | NOVA/MARKET',
   },
-  description: 'Modern e-commerce store built with Next.js, Prisma, and Stripe',
-  keywords: ['ecommerce', 'nextjs', 'store', 'shopping'],
-  authors: [{ name: 'NextJS E-commerce' }],
-  creator: 'NextJS E-commerce',
+  description:
+    'A database-driven technology marketplace for thoughtful devices, computing, and audio.',
+  keywords: ['technology marketplace', 'electronics', 'smartphones', 'laptops', 'audio'],
+  authors: [{ name: 'NOVA/MARKET' }],
+  creator: 'NOVA/MARKET',
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   ),
@@ -28,15 +29,15 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    title: 'NextJS E-commerce Store',
-    description: 'Modern e-commerce store built with Next.js',
-    siteName: 'NextJS E-commerce',
+    title: 'NOVA/MARKET',
+    description: 'A technology marketplace for the way you live and work.',
+    siteName: 'NOVA/MARKET',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NextJS E-commerce Store',
-    description: 'Modern e-commerce store built with Next.js',
-    creator: '@nextjsecommerce',
+    title: 'NOVA/MARKET',
+    description: 'A technology marketplace for the way you live and work.',
+    creator: '@novamarket',
   },
   robots: {
     index: true,

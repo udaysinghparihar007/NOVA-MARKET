@@ -18,6 +18,9 @@ const navLinks = [
   { href: '/products', label: 'Shop all' },
   { href: '/products?sort=newest', label: 'New arrivals' },
   { href: '/category/electronics', label: 'Electronics' },
+  { href: '/category/smartphones', label: 'Smartphones' },
+  { href: '/category/laptops', label: 'Laptops' },
+  { href: '/category/audio', label: 'Audio' },
 ];
 
 export function Header() {

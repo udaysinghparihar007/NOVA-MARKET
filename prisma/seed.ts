@@ -1,420 +1,272 @@
-// Location: prisma/seed.ts
-
 import { PrismaClient, ProductStatus, UserRole } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
+const catalog = [
+  {
+    name: 'iPhone 15 Pro',
+    slug: 'iphone-15-pro',
+    description: 'A titanium smartphone with a pro camera system and A17 Pro chip.',
+    content:
+      'The iPhone 15 Pro combines a lightweight titanium design, an advanced camera system, and the A17 Pro chip for demanding everyday workflows.',
+    price: 999.99,
+    comparePrice: 1099.99,
+    costPrice: 750,
+    categorySlug: 'smartphones',
+    sku: 'IPH15PRO-128-NT',
+    tags: ['smartphone', 'apple', 'ios', 'premium'],
+    seoTitle: 'iPhone 15 Pro | NOVA/MARKET',
+    seoDescription:
+      'Shop the iPhone 15 Pro with titanium design, advanced cameras, and A17 Pro performance.',
+    images: [
+      '/images/products/iphone-15-pro.svg',
+      '/images/products/iphone-15-pro-alt.svg',
+    ],
+    variants: [
+      ['Storage', '128GB', 0],
+      ['Storage', '256GB', 100],
+      ['Storage', '512GB', 300],
+      ['Color', 'Natural Titanium', 0],
+      ['Color', 'Blue Titanium', 0],
+      ['Color', 'White Titanium', 0],
+    ] as const,
+  },
+  {
+    name: 'MacBook Air M2',
+    slug: 'macbook-air-m2',
+    description: 'A thin, capable laptop powered by the Apple M2 chip.',
+    content:
+      'MacBook Air with M2 delivers dependable performance, long battery life, and a quiet, portable design for work and study.',
+    price: 1199.99,
+    comparePrice: 1299.99,
+    costPrice: 900,
+    categorySlug: 'laptops',
+    sku: 'MBA-M2-256-SG',
+    tags: ['laptop', 'apple', 'macos', 'm2', 'productivity'],
+    seoTitle: 'MacBook Air M2 | NOVA/MARKET',
+    seoDescription:
+      'Shop MacBook Air M2 for lightweight performance, long battery life, and everyday productivity.',
+    images: [
+      '/images/products/macbook-air-m2.svg',
+      '/images/products/macbook-air-m2-alt.svg',
+    ],
+    variants: [] as const,
+  },
+  {
+    name: 'Samsung Galaxy S24',
+    slug: 'samsung-galaxy-s24',
+    description: 'A flagship Android smartphone with an AI-powered camera.',
+    content:
+      'Galaxy S24 pairs a vivid display and long-lasting battery with intelligent camera features for work, communication, and creativity.',
+    price: 899.99,
+    comparePrice: 999.99,
+    costPrice: 650,
+    categorySlug: 'smartphones',
+    sku: 'SGS24-256-PH',
+    tags: ['smartphone', 'samsung', 'android', 'galaxy', 'mobile'],
+    seoTitle: 'Samsung Galaxy S24 | NOVA/MARKET',
+    seoDescription:
+      'Discover the Samsung Galaxy S24 with an AI-powered camera and all-day battery life.',
+    images: [
+      '/images/products/samsung-galaxy-s24.svg',
+      '/images/products/samsung-galaxy-s24-alt.svg',
+    ],
+    variants: [] as const,
+  },
+  {
+    name: 'Wireless Headphones',
+    slug: 'wireless-headphones',
+    description: 'Wireless headphones with active noise cancellation and rich sound.',
+    content:
+      'Enjoy immersive sound, active noise cancellation, and up to 30 hours of battery life for focused listening anywhere.',
+    price: 199.99,
+    comparePrice: 249.99,
+    costPrice: 120,
+    categorySlug: 'audio',
+    sku: 'WH-NC-BLK-BT',
+    tags: ['audio', 'headphones', 'wireless', 'bluetooth', 'noise-cancelling'],
+    seoTitle: 'Wireless Noise-Cancelling Headphones | NOVA/MARKET',
+    seoDescription:
+      'Shop wireless headphones with active noise cancellation and 30-hour battery life.',
+    images: [
+      '/images/products/wireless-headphones.svg',
+      '/images/products/wireless-headphones-alt.svg',
+    ],
+    variants: [] as const,
+  },
+] as const;
+
 async function main() {
-  console.log('🌱 Starting database seed...');
+  console.log('Starting NOVA/MARKET seed...');
 
-  // Create admin user
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
-  const adminPassword = await hash('admin123', 12);
-
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: { name: 'NOVA/MARKET Admin', role: UserRole.ADMIN },
     create: {
       email: adminEmail,
-      name: 'Admin User',
+      name: 'NOVA/MARKET Admin',
       role: UserRole.ADMIN,
-      password: adminPassword,
+      password: await hash('admin123', 12),
     },
   });
 
-  console.log(`👤 Created admin user: ${admin.email}`);
-
-  // Create test customer
-  const customerPassword = await hash('customer123', 12);
   const customer = await prisma.user.upsert({
     where: { email: 'customer@example.com' },
-    update: {},
+    update: { name: 'NOVA/MARKET Customer' },
     create: {
       email: 'customer@example.com',
-      name: 'John Doe',
+      name: 'NOVA/MARKET Customer',
       role: UserRole.USER,
-      password: customerPassword,
+      password: await hash('customer123', 12),
     },
   });
 
-  console.log(`👤 Created customer: ${customer.email}`);
-
-  // Create categories
-  const electronicsCategory = await prisma.category.create({
-    data: {
+  const electronics = await prisma.category.upsert({
+    where: { slug: 'electronics' },
+    update: {
+      name: 'Electronics',
+      description: 'Consumer technology for work, communication, and play.',
+      image: '/images/categories/electronics.svg',
+      parentId: null,
+    },
+    create: {
       name: 'Electronics',
       slug: 'electronics',
-      description: 'Electronic devices and gadgets',
+      description: 'Consumer technology for work, communication, and play.',
       image: '/images/categories/electronics.svg',
     },
   });
 
-  const clothingCategory = await prisma.category.create({
-    data: {
-      name: 'Clothing',
-      slug: 'clothing',
-      description: 'Fashion and apparel',
-      image: '/images/categories/clothing.svg',
-    },
-  });
+  const categoryData = [
+    ['smartphones', 'Smartphones', 'Mobile devices for work and everyday life.'],
+    ['laptops', 'Laptops', 'Portable computers for focused productivity.'],
+    ['audio', 'Audio', 'Headphones and speakers for richer listening.'],
+  ] as const;
 
-  const homeCategory = await prisma.category.create({
-    data: {
-      name: 'Home & Garden',
-      slug: 'home-garden',
-      description: 'Home improvement and garden supplies',
-      image: '/images/categories/home-garden.svg',
-    },
-  });
-
-  console.log('📂 Created categories');
-
-  // Create subcategories
-  const smartphonesCategory = await prisma.category.create({
-    data: {
-      name: 'Smartphones',
-      slug: 'smartphones',
-      description: 'Latest smartphones and mobile devices',
-      parentId: electronicsCategory.id,
-    },
-  });
-
-  const laptopsCategory = await prisma.category.create({
-    data: {
-      name: 'Laptops',
-      slug: 'laptops',
-      description: 'Laptops and notebooks',
-      parentId: electronicsCategory.id,
-    },
-  });
-
-  const mensClothingCategory = await prisma.category.create({
-    data: {
-      name: "Men's Clothing",
-      slug: 'mens-clothing',
-      description: 'Clothing for men',
-      parentId: clothingCategory.id,
-    },
-  });
-
-  console.log('📂 Created subcategories');
-
-  // Create products
-  const products = [
-    {
-      name: 'iPhone 15 Pro',
-      slug: 'iphone-15-pro',
-      description: 'Latest iPhone with advanced camera system',
-      content:
-        'The iPhone 15 Pro features a titanium design, advanced camera system, and A17 Pro chip.',
-      price: 999.99,
-      comparePrice: 1099.99,
-      costPrice: 750.0,
-      categoryId: smartphonesCategory.id,
-      status: ProductStatus.PUBLISHED,
-      sku: 'IPH15PRO-128-NT',
-      tags: ['smartphone', 'apple', 'ios', 'premium'],
-      seoTitle: 'iPhone 15 Pro - Premium Smartphone | Your Store',
-      seoDescription:
-        'Get the latest iPhone 15 Pro with titanium design and advanced camera system.',
-    },
-    {
-      name: 'MacBook Air M2',
-      slug: 'macbook-air-m2',
-      description: 'Lightweight laptop with M2 chip',
-      content:
-        'The MacBook Air with M2 chip delivers incredible performance in a thin and light design.',
-      price: 1199.99,
-      comparePrice: 1299.99,
-      costPrice: 900.0,
-      categoryId: laptopsCategory.id,
-      status: ProductStatus.PUBLISHED,
-      sku: 'MBA-M2-256-SG',
-      tags: ['laptop', 'apple', 'macos', 'm2'],
-      seoTitle: 'MacBook Air M2 - Ultra-thin Laptop | Your Store',
-      seoDescription:
-        'Experience incredible performance with the MacBook Air M2.',
-    },
-    {
-      name: 'Samsung Galaxy S24',
-      slug: 'samsung-galaxy-s24',
-      description: 'Flagship Android smartphone',
-      content:
-        'The Galaxy S24 features AI-powered camera, long-lasting battery, and stunning display.',
-      price: 899.99,
-      comparePrice: 999.99,
-      costPrice: 650.0,
-      categoryId: smartphonesCategory.id,
-      status: ProductStatus.PUBLISHED,
-      sku: 'SGS24-256-PH',
-      tags: ['smartphone', 'samsung', 'android', 'galaxy'],
-      seoTitle: 'Samsung Galaxy S24 - AI-Powered Smartphone | Your Store',
-      seoDescription:
-        'Discover the Samsung Galaxy S24 with AI-powered features.',
-    },
-    {
-      name: 'Premium Cotton T-Shirt',
-      slug: 'premium-cotton-tshirt',
-      description: 'Comfortable and stylish cotton t-shirt',
-      content:
-        'Made from 100% organic cotton, this t-shirt offers comfort and style.',
-      price: 29.99,
-      comparePrice: 39.99,
-      costPrice: 15.0,
-      categoryId: mensClothingCategory.id,
-      status: ProductStatus.PUBLISHED,
-      sku: 'TSHIRT-COT-M-BLU',
-      tags: ['clothing', 'cotton', 'casual', 'organic'],
-      seoTitle: 'Premium Cotton T-Shirt - Organic & Comfortable | Your Store',
-      seoDescription:
-        'Shop our premium organic cotton t-shirt for ultimate comfort.',
-    },
-    {
-      name: 'Wireless Headphones',
-      slug: 'wireless-headphones',
-      description: 'High-quality wireless headphones with noise cancellation',
-      content:
-        'Experience superior sound quality with active noise cancellation and 30-hour battery life.',
-      price: 199.99,
-      comparePrice: 249.99,
-      costPrice: 120.0,
-      categoryId: electronicsCategory.id,
-      status: ProductStatus.PUBLISHED,
-      sku: 'WH-NC-BLK-BT',
-      tags: ['headphones', 'wireless', 'bluetooth', 'noise-cancelling'],
-      seoTitle: 'Wireless Noise-Cancelling Headphones | Your Store',
-      seoDescription:
-        'Premium wireless headphones with active noise cancellation.',
-    },
-  ];
-
-  // Product image mapping with local images
-  const productImages: Record<string, string[]> = {
-    'iphone-15-pro': [
-      '/images/products/iphone-15-pro.svg',
-      '/images/products/iphone-15-pro-alt.svg',
-    ],
-    'macbook-air-m2': [
-      '/images/products/macbook-air-m2.svg',
-      '/images/products/macbook-air-m2-alt.svg',
-    ],
-    'samsung-galaxy-s24': [
-      '/images/products/samsung-galaxy-s24.svg',
-      '/images/products/samsung-galaxy-s24-alt.svg',
-    ],
-    'premium-cotton-tshirt': [
-      '/images/products/premium-cotton-tshirt.svg',
-      '/images/products/premium-cotton-tshirt-alt.svg',
-    ],
-    'wireless-headphones': [
-      '/images/products/wireless-headphones.svg',
-      '/images/products/wireless-headphones-alt.svg',
-    ],
-  };
-
-  for (const productData of products) {
-    const product = await prisma.product.create({
-      data: productData,
+  const categories = new Map<string, string>([['electronics', electronics.id]]);
+  for (const [slug, name, description] of categoryData) {
+    const category = await prisma.category.upsert({
+      where: { slug },
+      update: { name, description, parentId: electronics.id },
+      create: { slug, name, description, parentId: electronics.id },
     });
+    categories.set(slug, category.id);
+  }
 
-    // Get images for this product or use generic placeholders
-    const images = productImages[product.slug] || [
-      '/images/placeholder.svg',
-      '/images/placeholder.svg',
-    ];
-
-    // Create product images
-    await prisma.productImage.createMany({
-      data: [
-        {
-          productId: product.id,
-          url: images[0]!,
-          altText: `${product.name} - Main Image`,
-          position: 0,
-        },
-        {
-          productId: product.id,
-          url: images[1]!,
-          altText: `${product.name} - Secondary Image`,
-          position: 1,
-        },
-      ],
-    });
-
-    // Create inventory
-    await prisma.inventory.create({
-      data: {
-        productId: product.id,
-        quantity: Math.floor(Math.random() * 100) + 10,
-        reserved: 0,
-        available: Math.floor(Math.random() * 100) + 10,
+  for (const item of catalog) {
+    const product = await prisma.product.upsert({
+      where: { slug: item.slug },
+      update: {
+        name: item.name,
+        description: item.description,
+        content: item.content,
+        price: item.price,
+        comparePrice: item.comparePrice,
+        costPrice: item.costPrice,
+        categoryId: categories.get(item.categorySlug),
+        status: ProductStatus.PUBLISHED,
+        sku: item.sku,
+        tags: [...item.tags],
+        seoTitle: item.seoTitle,
+        seoDescription: item.seoDescription,
+      },
+      create: {
+        name: item.name,
+        slug: item.slug,
+        description: item.description,
+        content: item.content,
+        price: item.price,
+        comparePrice: item.comparePrice,
+        costPrice: item.costPrice,
+        categoryId: categories.get(item.categorySlug),
+        status: ProductStatus.PUBLISHED,
+        sku: item.sku,
+        tags: [...item.tags],
+        seoTitle: item.seoTitle,
+        seoDescription: item.seoDescription,
       },
     });
 
-    // Create product variants for some products
-    if (product.slug === 'iphone-15-pro') {
+    await prisma.productImage.deleteMany({ where: { productId: product.id } });
+    await prisma.productImage.createMany({
+      data: item.images.map((url, position) => ({
+        productId: product.id,
+        url,
+        position,
+        altText: `${item.name} product image`,
+      })),
+    });
+
+    await prisma.inventory.upsert({
+      where: { productId: product.id },
+      update: { quantity: 50, available: 50, reserved: 0 },
+      create: { productId: product.id, quantity: 50, available: 50, reserved: 0 },
+    });
+
+    await prisma.productVariant.deleteMany({ where: { productId: product.id } });
+    if (item.variants.length) {
       await prisma.productVariant.createMany({
-        data: [
-          {
-            productId: product.id,
-            name: 'Storage',
-            value: '128GB',
-            position: 0,
-          },
-          {
-            productId: product.id,
-            name: 'Storage',
-            value: '256GB',
-            price: 100,
-            position: 1,
-          },
-          {
-            productId: product.id,
-            name: 'Storage',
-            value: '512GB',
-            price: 300,
-            position: 2,
-          },
-          {
-            productId: product.id,
-            name: 'Color',
-            value: 'Natural Titanium',
-            position: 0,
-          },
-          {
-            productId: product.id,
-            name: 'Color',
-            value: 'Blue Titanium',
-            position: 1,
-          },
-          {
-            productId: product.id,
-            name: 'Color',
-            value: 'White Titanium',
-            position: 2,
-          },
-        ],
+        data: item.variants.map(([name, value, price], position) => ({
+          productId: product.id,
+          name,
+          value,
+          price,
+          position,
+        })),
       });
     }
 
-    if (product.slug === 'premium-cotton-tshirt') {
-      await prisma.productVariant.createMany({
-        data: [
-          { productId: product.id, name: 'Size', value: 'S', position: 0 },
-          { productId: product.id, name: 'Size', value: 'M', position: 1 },
-          { productId: product.id, name: 'Size', value: 'L', position: 2 },
-          {
-            productId: product.id,
-            name: 'Size',
-            value: 'XL',
-            price: 5,
-            position: 3,
-          },
-          { productId: product.id, name: 'Color', value: 'Blue', position: 0 },
-          { productId: product.id, name: 'Color', value: 'Black', position: 1 },
-          { productId: product.id, name: 'Color', value: 'White', position: 2 },
-        ],
-      });
-    }
-
-    console.log(`📦 Created product: ${product.name}`);
-  }
-
-  // Create sample reviews
-  const reviewProducts = await prisma.product.findMany({ take: 3 });
-
-  for (const product of reviewProducts) {
-    await prisma.review.create({
-      data: {
+    await prisma.review.upsert({
+      where: {
+        userId_productId: {
+          userId: customer.id,
+          productId: product.id,
+        },
+      },
+      update: {
         rating: 5,
-        title: 'Excellent product!',
-        content:
-          'Really happy with this purchase. Great quality and fast shipping.',
+        title: 'Excellent product',
+        content: 'A reliable purchase with thoughtful design and fast delivery.',
         verified: true,
+      },
+      create: {
         userId: customer.id,
         productId: product.id,
+        rating: 5,
+        title: 'Excellent product',
+        content: 'A reliable purchase with thoughtful design and fast delivery.',
+        verified: true,
       },
     });
   }
 
-  console.log('⭐ Created sample reviews');
-
-  // Create sample cart items
   const customerCart = await prisma.cart.upsert({
     where: { userId: customer.id },
     update: {},
     create: { userId: customer.id },
   });
-
-  const sampleProducts = await prisma.product.findMany({ take: 2 });
-
-  for (const product of sampleProducts) {
-    await prisma.cartItem.create({
-      data: {
-        quantity: Math.floor(Math.random() * 3) + 1,
-        cartId: customerCart.id,
-        productId: product.id,
-      },
-    });
-  }
-
-  console.log('🛒 Created sample cart items');
-
-  // Create sample orders
-  const orderProducts = await prisma.product.findMany({ take: 2 });
-  const orderTotal = orderProducts.reduce((sum, p) => sum + Number(p.price), 0);
-
-  const order = await prisma.order.create({
-    data: {
-      orderNumber: 'ORD-' + Date.now(),
-      subtotal: orderTotal,
-      tax: orderTotal * 0.08, // 8% tax
-      shipping: 9.99,
-      total: orderTotal + orderTotal * 0.08 + 9.99,
-      customerEmail: customer.email,
-      customerPhone: '+1234567890',
-      shippingName: customer.name || 'John Doe',
-      shippingAddress: '123 Main St',
-      shippingCity: 'New York',
-      shippingState: 'NY',
-      shippingZip: '10001',
-      shippingCountry: 'US',
-      userId: customer.id,
-    },
+  const cartProducts = await prisma.product.findMany({
+    where: { slug: { in: ['iphone-15-pro', 'macbook-air-m2'] } },
+    select: { id: true },
+  });
+  await prisma.cartItem.deleteMany({ where: { cartId: customerCart.id } });
+  await prisma.cartItem.createMany({
+    data: cartProducts.map(product => ({
+      cartId: customerCart.id,
+      productId: product.id,
+      quantity: 1,
+    })),
   });
 
-  // Create order items
-  for (const product of orderProducts) {
-    await prisma.orderItem.create({
-      data: {
-        quantity: 1,
-        price: product.price,
-        productName: product.name,
-        productSku: product.sku,
-        orderId: order.id,
-        productId: product.id,
-      },
-    });
-  }
-
-  console.log(`📋 Created sample order: ${order.orderNumber}`);
-
-  console.log('✅ Database seeding completed successfully!');
-  console.log('\n📊 Summary:');
-  console.log(`👤 Users: ${await prisma.user.count()}`);
-  console.log(`📂 Categories: ${await prisma.category.count()}`);
-  console.log(`📦 Products: ${await prisma.product.count()}`);
-  console.log(`📋 Orders: ${await prisma.order.count()}`);
-  console.log(`⭐ Reviews: ${await prisma.review.count()}`);
-  console.log('\n🔐 Admin Login:');
-  console.log(`Email: ${adminEmail}`);
-  console.log('Password: admin123');
+  console.log(`Seeded ${catalog.length} technology products.`);
+  console.log(`Admin: ${admin.email}`);
 }
 
 main()
-  .catch(e => {
-    console.error('❌ Error seeding database:', e);
+  .catch(error => {
+    console.error('NOVA/MARKET seed failed:', error);
     process.exit(1);
   })
   .finally(async () => {
