@@ -96,10 +96,11 @@ export const getProducts = createCachedFunction(
   async (filters?: Partial<ProductFilterInput>) => {
     const {
       category,
+      status,
       minPrice,
       maxPrice,
       tags,
-      active = true,
+      active,
       search,
       sortBy = 'createdAt',
       sortOrder = 'desc',
@@ -108,7 +109,13 @@ export const getProducts = createCachedFunction(
     } = filters || {};
 
     const where: Prisma.ProductWhereInput = {
-      status: active ? 'PUBLISHED' : { not: 'PUBLISHED' },
+      ...(status
+        ? { status }
+        : active === true
+          ? { status: 'PUBLISHED' }
+          : active === false
+            ? { status: { not: 'PUBLISHED' } }
+            : {}),
       ...(category ? { category: { slug: category } } : {}),
       ...(minPrice !== undefined || maxPrice !== undefined
         ? {
@@ -188,7 +195,7 @@ export const getProductById = createCachedFunction(
 export const getFeaturedProducts = createCachedFunction(
   async (limit = 8) => {
     const products = await prisma.product.findMany({
-      where: { status: 'PUBLISHED' },
+      where: { status: 'PUBLISHED', featured: true },
       include: storefrontRelations,
       orderBy: { createdAt: 'desc' },
       take: limit,

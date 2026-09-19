@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   keywords: ['technology marketplace', 'electronics', 'smartphones', 'laptops', 'audio'],
   authors: [{ name: 'NOVA/MARKET' }],
   creator: 'NOVA/MARKET',
+  icons: {
+    icon: '/icon',
+    apple: '/icon',
+  },
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   ),
@@ -32,12 +36,14 @@ export const metadata: Metadata = {
     title: 'NOVA/MARKET',
     description: 'A technology marketplace for the way you live and work.',
     siteName: 'NOVA/MARKET',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'NOVA/MARKET technology marketplace' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'NOVA/MARKET',
     description: 'A technology marketplace for the way you live and work.',
     creator: '@novamarket',
+    images: ['/twitter-image'],
   },
   robots: {
     index: true,

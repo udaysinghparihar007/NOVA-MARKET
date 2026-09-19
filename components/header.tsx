@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { Menu, Search, UserRound, Sparkles } from 'lucide-react';
+import { Menu, Search, UserRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { CartDrawer } from '@/components/cart-drawer';
+import { BrandMark } from '@/components/brand-mark';
 
 const navLinks = [
   { href: '/products', label: 'Shop all' },
@@ -31,10 +32,10 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-background/90 backdrop-blur-xl">
       <div className="container mx-auto flex min-h-16 items-center justify-between gap-4 px-4">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-blue-500/20">
-            <Sparkles className="h-4 w-4" />
+          <BrandMark className="h-9 w-9 rounded-xl" />
+          <span className="text-xl font-bold tracking-tight">
+            NOVA<span className="text-primary">/</span>MARKET
           </span>
-          <span className="text-xl font-bold tracking-tight">NOVA<span className="text-primary">/</span>MARKET</span>
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex">
