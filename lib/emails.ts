@@ -4,7 +4,15 @@ import { render } from '@react-email/render';
 import { OrderConfirmation } from '@/emails/OrderConfirmation';
 import { ResetPassword } from '@/emails/ResetPassword';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not configured');
+  }
+
+  return new Resend(apiKey);
+}
 
 export interface OrderEmailData {
   orderId: string;
@@ -34,6 +42,7 @@ export interface ResetPasswordEmailData {
 
 export const sendOrderConfirmation = async (data: OrderEmailData) => {
   try {
+    const resend = getResendClient();
     const emailHtml = await render(OrderConfirmation(data));
 
     await resend.emails.send({
@@ -58,6 +67,7 @@ export const sendResetPasswordEmail = async (
   data: ResetPasswordEmailData
 ) => {
   try {
+    const resend = getResendClient();
     const emailHtml = await render(ResetPassword(data));
 
     await resend.emails.send({
@@ -76,6 +86,7 @@ export const sendResetPasswordEmail = async (
 
 export const sendWelcomeEmail = async (email: string, name: string) => {
   try {
+    const resend = getResendClient();
     await resend.emails.send({
       from: process.env.EMAIL_FROM!,
       to: email,
@@ -103,6 +114,7 @@ export const sendLowStockAlert = async (
   currentStock: number
 ) => {
   try {
+    const resend = getResendClient();
     await resend.emails.send({
       from: process.env.EMAIL_FROM!,
       to: adminEmail,
