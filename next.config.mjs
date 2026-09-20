@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: process.env.VERCEL ? undefined : 'standalone',
   serverExternalPackages: ['@prisma/client', 'bcrypt'],
   images: {
     dangerouslyAllowSVG: true,
