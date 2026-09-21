@@ -1,8 +1,12 @@
 // File: app/robots.ts
 import { MetadataRoute } from 'next';
+import { requireUrl } from '@/lib/env';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const baseUrl =
+    process.env.NODE_ENV === 'production'
+      ? requireUrl('NEXT_PUBLIC_APP_URL')
+      : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   return {
     rules: [

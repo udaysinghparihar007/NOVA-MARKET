@@ -9,6 +9,7 @@ import { getCurrentUser } from '@/lib/roles';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getCart, clearCart } from './cart';
+import { requireUrl } from '@/lib/env';
 
 export async function createCheckout(formData: FormData) {
   try {
@@ -176,8 +177,8 @@ export async function createCheckout(formData: FormData) {
     const session = await createCheckoutSession({
       items: lineItems,
       customer_email: validatedData.customerInfo.email,
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/stripe/confirm?session_id={CHECKOUT_SESSION_ID}&orderId=${order.id}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cart`,
+      success_url: `${requireUrl('NEXT_PUBLIC_APP_URL')}/api/stripe/confirm?session_id={CHECKOUT_SESSION_ID}&orderId=${order.id}`,
+      cancel_url: `${requireUrl('NEXT_PUBLIC_APP_URL')}/cart`,
       metadata: {
         orderId: order.id,
       },

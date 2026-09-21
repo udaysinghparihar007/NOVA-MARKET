@@ -8,6 +8,10 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import prisma from './prisma';
 import { getServerSession } from 'next-auth';
+import { requireEnv, requireUrl } from './env';
+
+const nextAuthSecret = requireEnv('NEXTAUTH_SECRET');
+requireUrl('NEXTAUTH_URL');
 
 // Extend NextAuth types
 declare module 'next-auth' {
@@ -38,6 +42,7 @@ declare module 'next-auth/jwt' {
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: nextAuthSecret,
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({

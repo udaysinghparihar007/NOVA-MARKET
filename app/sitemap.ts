@@ -2,11 +2,15 @@
 import { MetadataRoute } from 'next';
 import { getAllProducts } from '@/server/queries/products';
 import prisma from '@/lib/prisma';
+import { requireUrl } from '@/lib/env';
 
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const baseUrl =
+    process.env.NODE_ENV === 'production'
+      ? requireUrl('NEXT_PUBLIC_APP_URL')
+      : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   // Get all products for dynamic routes
   const products = await getAllProducts();

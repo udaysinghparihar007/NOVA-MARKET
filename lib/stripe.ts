@@ -1,7 +1,8 @@
 // lib/stripe.ts
 import Stripe from 'stripe';
+import { requireEnv } from './env';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+export const stripe = new Stripe(requireEnv('STRIPE_SECRET_KEY'), {
   apiVersion: '2023-10-16',
   typescript: true,
 });
@@ -56,7 +57,7 @@ export const constructWebhookEvent = (body: string, signature: string) => {
   return stripe.webhooks.constructEvent(
     body,
     signature,
-    process.env.STRIPE_WEBHOOK_SECRET!
+    requireEnv('STRIPE_WEBHOOK_SECRET')
   );
 };
 

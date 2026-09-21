@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { render } from '@react-email/render';
 import { OrderConfirmation } from '@/emails/OrderConfirmation';
 import { ResetPassword } from '@/emails/ResetPassword';
+import { requireEnv, requireUrl } from './env';
 
 function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY;
@@ -46,7 +47,7 @@ export const sendOrderConfirmation = async (data: OrderEmailData) => {
     const emailHtml = await render(OrderConfirmation(data));
 
     await resend.emails.send({
-      from: process.env.EMAIL_FROM!,
+      from: requireEnv('EMAIL_FROM'),
       to: data.customerEmail,
       subject: `Order Confirmation - #${data.orderId}`,
       html: emailHtml,
@@ -71,7 +72,7 @@ export const sendResetPasswordEmail = async (
     const emailHtml = await render(ResetPassword(data));
 
     await resend.emails.send({
-      from: process.env.EMAIL_FROM!,
+      from: requireEnv('EMAIL_FROM'),
       to: email,
       subject: 'Reset your password',
       html: emailHtml,
@@ -88,14 +89,14 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
   try {
     const resend = getResendClient();
     await resend.emails.send({
-      from: process.env.EMAIL_FROM!,
+      from: requireEnv('EMAIL_FROM'),
       to: email,
       subject: 'Welcome to our store!',
       html: `
         <h1>Welcome ${name}!</h1>
         <p>Thank you for creating an account with us. We're excited to have you as a customer.</p>
         <p>Start shopping now and enjoy exclusive deals and offers.</p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}" style="background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+        <a href="${requireUrl('NEXT_PUBLIC_APP_URL')}" style="background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
           Start Shopping
         </a>
       `,
@@ -116,7 +117,7 @@ export const sendLowStockAlert = async (
   try {
     const resend = getResendClient();
     await resend.emails.send({
-      from: process.env.EMAIL_FROM!,
+      from: requireEnv('EMAIL_FROM'),
       to: adminEmail,
       subject: `Low Stock Alert: ${productName}`,
       html: `
@@ -127,7 +128,7 @@ export const sendLowStockAlert = async (
           <li><strong>Current Stock:</strong> ${currentStock}</li>
         </ul>
         <p>Please consider restocking this item soon.</p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/inventory" style="background-color: #f59e0b; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+        <a href="${requireUrl('NEXT_PUBLIC_APP_URL')}/admin/inventory" style="background-color: #f59e0b; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
           Manage Inventory
         </a>
       `,

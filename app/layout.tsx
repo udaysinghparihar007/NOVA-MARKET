@@ -7,6 +7,7 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { CartProvider } from '@/components/cart-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { requireUrl } from '@/lib/env';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,7 +28,9 @@ export const metadata: Metadata = {
     apple: '/icon',
   },
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    process.env.NODE_ENV === 'production'
+      ? requireUrl('NEXT_PUBLIC_APP_URL')
+      : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   ),
   openGraph: {
     type: 'website',
