@@ -11,12 +11,10 @@ The project demonstrates full-stack software engineering across the customer sto
 ## 🚀 Demo
 
 **Live Demo:**  
-https://your-deployment-url.com
+https://nova-market-omega.vercel.app
 
 **GitHub:**  
-https://github.com/YOUR_USERNAME/YOUR_REPOSITORY
-
-> Replace the placeholder URLs above after deployment.
+https://github.com/udaysinghparihar007/NOVA-MARKET
 
 ---
 
@@ -24,25 +22,39 @@ https://github.com/YOUR_USERNAME/YOUR_REPOSITORY
 
 ### Storefront
 
-![NOVA/MARKET Homepage](./docs/screenshots/homepage.png)
+![NOVA/MARKET Homepage](./public/page_images/home_0.png)
 
 ### Product Catalog
 
-![NOVA/MARKET Product Catalog](./docs/screenshots/products.png)
+![NOVA/MARKET Product Catalog](./public/page_images/products.png)
 
 ### Product Details
 
-![NOVA/MARKET Product Details](./docs/screenshots/product-details.png)
+![NOVA/MARKET Product Details](./public/page_images/product-detail.png)
+
+### Shopping Cart
+
+![NOVA/MARKET Shopping Cart](./public/page_images/cart_0.png)
+
+### Checkout
+
+![NOVA/MARKET Checkout](./public/page_images/checkout.png)
+
+### Authentication
+
+![NOVA/MARKET Login](./public/page_images/login.png)
+
+### Admin Dashboard
+
+![NOVA/MARKET Admin Dashboard](./public/page_images/admin-dashboard.png)
 
 ### Admin Product Management
 
-![NOVA/MARKET Admin Product Management](./docs/screenshots/admin-products.png)
+![NOVA/MARKET Admin Product Management](./public/page_images/admin-products_0.png)
 
-### Add / Edit Product
+### Product Editor
 
-![NOVA/MARKET Add Product](./docs/screenshots/admin-product-editor.png)
-
-> Screenshots are stored in `docs/screenshots/`.
+![NOVA/MARKET Product Editor](./public/page_images/admin-product-editor_0.png)
 
 ---
 
@@ -65,7 +77,9 @@ https://github.com/YOUR_USERNAME/YOUR_REPOSITORY
 - Reviews and ratings
 - SEO metadata
 - Responsive design
-- Loading and empty states
+- Loading states
+- Empty states
+- Error handling
 
 ---
 
@@ -79,20 +93,32 @@ https://github.com/YOUR_USERNAME/YOUR_REPOSITORY
 - Stock-aware purchasing
 - Product availability checks
 - Order lifecycle management
-- Stripe checkout
+- Stripe checkout integration
 - Stripe webhook handling
+- Server-side product and inventory validation
 
 ---
 
-## 🔐 Authentication & Authorization
+# 🔐 Authentication & Authorization
+
+NOVA/MARKET includes authentication and role-based access control.
+
+### Customer Features
 
 - User authentication
 - Protected account pages
+- Customer order history
+- Cart management
+- Review functionality
+
+### Administration
+
 - Role-based admin access
 - Protected administration routes
-- Customer order history
-- Admin-only product management
 - Server-side authorization checks
+- Admin-only product management
+- Protected product creation and editing
+- Protected product deletion
 
 ---
 
@@ -121,6 +147,9 @@ Admins can:
 - Manage variants
 - Manage tags
 - Manage descriptions
+- Manage product status
+
+---
 
 ## Product Editor
 
@@ -133,7 +162,7 @@ It supports:
 - Manual slug editing
 - Short description
 - Full description
-- Category
+- Category selection
 - Brand
 - SKU
 - Price
@@ -147,7 +176,9 @@ It supports:
 - Publishing status
 - Featured product controls
 
-## Product Image Management
+---
+
+# 🖼️ Product Image Management
 
 Admins can manage multiple images for every product.
 
